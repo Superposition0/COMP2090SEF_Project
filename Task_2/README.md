@@ -1,5 +1,9 @@
 # Task 2
 ## Description(Data structure)
-## Instruction 
+Trie was selected to be our group's study topic.
+## Instruction to install and run(Data structure)
+
+--- 
 ## Description(Algorithm)
-## Instruction 
+
+## Instruction to install and run(Algorithm)
