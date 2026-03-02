@@ -74,6 +74,16 @@ class WeeklyAnime(anime):
         self.Special = Special
         self.ViewPlatform = ViewPlatform
 
+    def time_get(self):
+        return self.UpdateTime
+    def time_set(self, time):
+        self.UpdateTime = time
+    def ViewMethod_get(self):
+        return self.ViewPlatform
+    def ViewMethod_set(self, method):
+        self.ViewPlatform = method
+        
+
 
 def main():
     print("Hello, world!")
