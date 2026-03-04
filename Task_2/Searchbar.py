@@ -4,7 +4,7 @@ import time
 
 anime_list = []
 record = []
-running = True            # flag used by main loop to determine when to exit
+running = True           # flag used by main loop to determine when to exit
 
 def load_anime():
     with open('anime.csv', 'r') as file:
