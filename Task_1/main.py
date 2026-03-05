@@ -1,12 +1,18 @@
 import io
 import os
+import sys
 import json
 import typer
 from rich import print
 from abc import ABC, abstractmethod
+try:
+    with open("anime_tracker.json", "w+", encoding="utf-8") as tracker_file:
+        tracker = json.load(tracker_file)
+except IOError:
+    sys.exit("Cannot open relative files!")
+except ValueError:
+    sys.exit("Decode error")
 
-with open("anime_tracker.json" "w+") as tracker_file:
-    tracker = json.load(tracker_file)
 #anime class
 '''
 Name: Anime Name
