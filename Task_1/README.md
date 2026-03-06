@@ -4,6 +4,7 @@ This programme is an anime tracker.
 Main purpose of this programme is to assist user to keep track of which anime will be updated and when will it be updated. 
 The user can add ratings and comments to anime they watched to keep a record.
 ## Instruction to install and run
+**Please run the programme with fullscreen terminal for the best experience**<br>
 This programme can be run in few different ways:
 ### Use Anaconda with enviroment file
   1. Download the whole `Task_1` folder
