@@ -140,16 +140,19 @@ class WeeklyAnime(anime):
         return "ViewPlatform updated successfully"
 def router():
         action = typer.prompt("Enter Your Action (Add/Update/List/Quit) ")
-        if action == "Add" or "add":
+        action = action.strip()
+        action = action.lower()
+        if action == "add":
             ...
-        elif action == "Update" or "update":
+        elif action == "update":
             ...
-        elif action == "List" or "list":
+        elif action == "list":
             ...
-        elif action == "Quit" or "quit":
+        elif action == "quit":
             typer.Exit()
         else:
-            router()
+            print("Unsupported action, Please enter again.")
+            return router()
 
 
 def main():
