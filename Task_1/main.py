@@ -1,3 +1,4 @@
+#Import Area
 import io
 import os
 import sys
@@ -10,6 +11,7 @@ from rich.table import Table
 from rich.layout import Layout
 from typing import Annotated
 from abc import ABC, abstractmethod
+#JSON file loader
 try:
     json_skeleton = {"name": "",
         "startDate": "",
@@ -99,7 +101,7 @@ class MovieVer(anime):
         self.Cinema = method
         return "Cinema updated successfully"
 
-#WeeklyAnime
+#WeeklyAnime sub-class
 '''
 UpdateWeekDay: The week day that the anime updated; can be input as full form e.g."Monday" or short form e.g. "1"
 UpdateTime: The time that the anime updated; should be input as HH:MM
@@ -138,6 +140,8 @@ class WeeklyAnime(anime):
     def ViewMethod_set(self, method):
         self.ViewPlatform = method
         return "ViewPlatform updated successfully"
+
+#After action received, redirect user to related module
 def router():
         action = typer.prompt("Enter Your Action (Add/Update/List/Quit) ")
         action = action.strip()
@@ -156,8 +160,10 @@ def router():
 
 
 def main():
+    #Date getter and formatter
     currentDate = datetime.datetime.now()
     DisplayDate = currentDate.strftime("%d/%m/%Y, %A")
+
     welcomeMessage = Text(r''''
                                                                  ___
  \    / _  |  _  _  ._ _   _    _|_  _     /\  ._  o ._ _   _     | ._ _.  _ |   _  ._ |
@@ -165,6 +171,7 @@ def main():
 ' ''')
     welcomeMessage.stylize("bold magenta")
     print(welcomeMessage)
+
     #Week view base template
     print(f"[green bold]Today is {DisplayDate}")
     table = Table(title="This Week Anime", box=box.ASCII2, safe_box=False, show_header=False, expand=True)
@@ -189,10 +196,8 @@ def main():
         print(table)
     else:
         print("[yellow i]Render Error, Please Restart")
+
     router()
-
-
-
     # print(os.path.exists("anime_tracker.json")) #TODO dev use:Delete
 
 
