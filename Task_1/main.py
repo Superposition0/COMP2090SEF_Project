@@ -8,6 +8,7 @@ from rich import print, box
 from rich.text import Text
 from rich.table import Table
 from rich.layout import Layout
+from typing import Annotated
 from abc import ABC, abstractmethod
 try:
     json_skeleton = {"name": "",
@@ -137,7 +138,18 @@ class WeeklyAnime(anime):
     def ViewMethod_set(self, method):
         self.ViewPlatform = method
         return "ViewPlatform updated successfully"
-
+def router():
+        action = typer.prompt("Enter Your Action (Add/Update/List/Quit) ")
+        if action == "Add" or "add":
+            ...
+        elif action == "Update" or "update":
+            ...
+        elif action == "List" or "list":
+            ...
+        elif action == "Quit" or "quit":
+            typer.Exit()
+        else:
+            router()
 
 
 def main():
@@ -174,9 +186,14 @@ def main():
         print(table)
     else:
         print("[yellow i]Render Error, Please Restart")
-    # print(os.path.exists("anime_tracker.json")) #dev use TODO:Delete
+    router()
+
+
+
+    # print(os.path.exists("anime_tracker.json")) #TODO dev use:Delete
 
 
 
 if __name__ == "__main__":
     typer.run(main)
+
