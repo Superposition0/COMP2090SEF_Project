@@ -12,6 +12,7 @@ from rich.layout import Layout
 from typing import Annotated
 from abc import ABC, abstractmethod
 #JSON file loader
+FILE_PATH = "anime_tracker.json"
 try:
     json_skeleton = {"name": "",
         "startDate": "",
@@ -140,6 +141,51 @@ class WeeklyAnime(anime):
     def ViewMethod_set(self, method):
         self.ViewPlatform = method
         return "ViewPlatform updated successfully"
+# ==========================================
+#Create
+def save_data(data_list):
+    "Save the data to json file"
+    with open(FILE_PATH, "w", encoding="utf-8") as f:
+        json.dump(data_list, f)
+
+def create_entry():
+    "Add logic"
+    print("Add New Anime")
+    # 1. name
+    name = typer.prompt("1. Name")
+    # 2. start airing date
+    start_date = typer.prompt("2. Start airing date (DD/MM/YYYY)")
+    # 3. update per ? day
+    weekday = typer.prompt("3. Update per ? day (e.g., Monday)")
+    # 4. update at ? time
+    u_time = typer.prompt("4. Update at ? time (HH:MM)")
+    # 5. episode number
+    eps = typer.prompt("5. Episode number")
+    # 6. special arrangements
+    special = typer.prompt("6. Special arrangements", default="None")
+    # 7. view platform
+    platform = typer.prompt("7. View platform")
+
+    #convert to jason
+    entry_data = {
+        "type": "Weekly",
+        "name": new_anime.name,
+        "startDate": new_anime.startDate,
+        "UpdateWeekDay": new_anime.UpdateWeekDay,
+        "UpdateTime": new_anime.UpdateTime,
+        "EpisodeNumber": new_anime.EpisodeNumber,
+        "Special": new_anime.Special,
+        "ViewPlatform": new_anime.ViewPlatform
+    }
+
+    AnimeTrack.append(entry_data)
+    save_data(AnimeTrack)
+    print(f"\n[green]Successfully created anime object: {name}![/green]")
+
+
+
+
+# ==========================================
 
 #After action received, redirect user to related module
 def router():
