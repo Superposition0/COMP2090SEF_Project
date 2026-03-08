@@ -168,14 +168,17 @@ def create_entry():
 
     #convert to jason
     entry_data = {
-        "type": "Weekly",
-        "name": new_anime.name,
-        "startDate": new_anime.startDate,
-        "UpdateWeekDay": new_anime.UpdateWeekDay,
-        "UpdateTime": new_anime.UpdateTime,
-        "EpisodeNumber": new_anime.EpisodeNumber,
-        "Special": new_anime.Special,
-        "ViewPlatform": new_anime.ViewPlatform
+        "name": name,
+        "startDate": start_date,
+        "Time": "",             
+        "Cinema": "",     
+        "UpdateWeekDay": weekday,
+        "UpdateTime": u_time,
+        "EpisodeNumber": eps,
+        "Special": special,
+        "ViewPlatform": platform,
+        "Ratings": "",          
+        "Notes": ""           
     }
 
     AnimeTrack.append(entry_data)
@@ -183,9 +186,11 @@ def create_entry():
     print(f"\n[green]Successfully created anime object: {name}![/green]")
 
 
-
-
 # ==========================================
+
+
+
+
 
 #After action received, redirect user to related module
 def router():
