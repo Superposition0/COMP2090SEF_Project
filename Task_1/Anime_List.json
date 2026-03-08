@@ -1,0 +1,57 @@
+[
+ {
+  "name": "Jujutsu Kaisen: Shibuya Incident",
+  "episodes": 26,
+  "status": "Completed"
+ },
+ {
+  "name": "One Piece",
+  "episodes": 1000,
+  "status": "Ongoing"
+ },
+ {
+  "name": "Attack on Titan",
+  "episodes": 75,
+  "status": "Completed"
+ },
+ {
+  "name": "My Hero Academia",
+  "episodes": 88,
+  "status": "Ongoing"
+ },
+ {
+  "name": "Demon Slayer",
+  "episodes": 26,
+  "status": "Completed"
+ },
+ {
+  "name": "Naruto",
+  "episodes": 220,
+  "status": "Completed"
+ },
+ {
+  "name": "Dragon Ball Z",
+  "episodes": 291,
+  "status": "Completed"
+ },
+ {
+  "name": "Fullmetal Alchemist: Brotherhood",
+  "episodes": 67,
+  "status": "Ongoing"
+ },
+ {
+  "name": "Death Note",
+  "episodes": 37,
+  "status": "Completed"
+ },
+ {
+  "name": "Sword Art Online",
+  "episodes": 100,
+  "status": "Completed"
+ },
+ {
+  "name": "Tokyo Ghoul",
+  "episodes": 100,
+  "status": "Ongoing"
+ }
+]
