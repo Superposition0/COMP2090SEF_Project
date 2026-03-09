@@ -20,6 +20,7 @@ try:
         "UpdateWeekDay": "",
         "UpdateTime": "",
         "EpisodeNumber": "",
+        "ViewStatus": "",
         "Special": "",
         "ViewPlatform": "",
         "Ratings": "",
@@ -175,23 +176,32 @@ def main():
     #Week view base template
     print(f"[green bold]Today is {DisplayDate}")
     table = Table(title="This Week Anime", box=box.ASCII2, safe_box=False, show_header=False, expand=True)
+
     tableSun = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if currentDate.strftime("%w")=="0" else "")
-    tableSun.add_column("Sunday", justify="center",)
+    tableSun.add_column("Sunday", justify="center")
+
     tableMon = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if currentDate.strftime("%w")=="1" else "")
     tableMon.add_column("Monday", justify="center")
+
     tableTue = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if currentDate.strftime("%w")=="2" else "")
     tableTue.add_column("Tuesday", justify="center")
+
     tableWed = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if currentDate.strftime("%w")=="3" else "")
     tableWed.add_column("Wednesday", justify="center")
+
     tableThu = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if currentDate.strftime("%w")=="4" else "")
     tableThu.add_column("Thursday", justify="center")
+
     tableFri = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if currentDate.strftime("%w")=="5" else "")
     tableFri.add_column("Friday", justify="center")
+
     tableSat = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if currentDate.strftime("%w")=="6" else "")
     tableSat.add_column("Saturday", justify="center")
+
     for i in range(7):
         table.add_column()
     table.add_row(tableSun,tableMon,tableTue,tableWed,tableThu,tableFri,tableSat)
+
     if table.columns:
         print(table)
     else:

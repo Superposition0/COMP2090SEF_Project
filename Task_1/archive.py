@@ -19,6 +19,7 @@ try:
         "UpdateWeekDay": "",
         "UpdateTime": "",
         "EpisodeNumber": "",
+        "ViewStatus": "",
         "Special": "",
         "ViewPlatform": "",
         "Ratings": "",
@@ -34,5 +35,18 @@ except IOError:
 except ValueError:
     sys.exit("Decode error")
 
-table = Table(title="Archived Anime", box=box.ASCII2, safe_box=False, expand=True)
-table.add_column()
+def archive():
+    table = Table(title="Archived Anime", box=box.ASCII2, safe_box=False, expand=True)
+    table.add_column("Name")
+    table.add_column("Episode Number")
+    table.add_column("View Status")
+    table.add_column("Ratings")
+    table.add_column("Notes")
+
+    if table.columns:
+        print(table)
+    else:
+        print("[yellow i]Render Error, Please Restart")
+
+if __name__ == "__main__":
+    typer.run(archive)
