@@ -11,6 +11,7 @@ from rich.table import Table
 from rich.layout import Layout
 from typing import Annotated
 from abc import ABC, abstractmethod
+from archive import archive
 #JSON file loader
 try:
     json_skeleton = {"name": "",
@@ -152,7 +153,7 @@ def router():
         elif action == "update":
             ...
         elif action == "list":
-            ...
+            archive()
         elif action == "quit":
             typer.Exit()
         else:
@@ -164,7 +165,7 @@ def main():
     #Date getter and formatter
     currentDate = datetime.datetime.now()
     DisplayDate = currentDate.strftime("%d/%m/%Y, %A")
-
+    WeekNum = currentDate.strftime("%w")
     welcomeMessage = Text(r''''
                                                                  ___
  \    / _  |  _  _  ._ _   _    _|_  _     /\  ._  o ._ _   _     | ._ _.  _ |   _  ._ |
@@ -177,25 +178,25 @@ def main():
     print(f"[green bold]Today is {DisplayDate}")
     table = Table(title="This Week Anime", box=box.ASCII2, safe_box=False, show_header=False, expand=True)
 
-    tableSun = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if currentDate.strftime("%w")=="0" else "")
+    tableSun = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if WeekNum=="0" else "")
     tableSun.add_column("Sunday", justify="center")
 
-    tableMon = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if currentDate.strftime("%w")=="1" else "")
+    tableMon = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if WeekNum=="1" else "")
     tableMon.add_column("Monday", justify="center")
 
-    tableTue = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if currentDate.strftime("%w")=="2" else "")
+    tableTue = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if WeekNum=="2" else "")
     tableTue.add_column("Tuesday", justify="center")
 
-    tableWed = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if currentDate.strftime("%w")=="3" else "")
+    tableWed = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if WeekNum=="3" else "")
     tableWed.add_column("Wednesday", justify="center")
 
-    tableThu = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if currentDate.strftime("%w")=="4" else "")
+    tableThu = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if WeekNum=="4" else "")
     tableThu.add_column("Thursday", justify="center")
 
-    tableFri = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if currentDate.strftime("%w")=="5" else "")
+    tableFri = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if WeekNum=="5" else "")
     tableFri.add_column("Friday", justify="center")
 
-    tableSat = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if currentDate.strftime("%w")=="6" else "")
+    tableSat = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if WeekNum=="6" else "")
     tableSat.add_column("Saturday", justify="center")
 
     for i in range(7):
