@@ -35,18 +35,31 @@ except IOError:
 except ValueError:
     sys.exit("Decode error")
 
-def archive():
-    table = Table(title="Archived Anime", box=box.ASCII2, safe_box=False, expand=True)
-    table.add_column("Name")
-    table.add_column("Episode Number")
-    table.add_column("View Status")
-    table.add_column("Ratings")
-    table.add_column("Notes")
+def action():
+    action = typer.prompt("Enter Your Action (Change/Quit) ")
+    action = action.strip()
+    action = action.lower()
+    if action == "change":
+        ...
+    elif action == "quit":
+        typer.Exit()
 
-    if table.columns:
-        print(table)
-    else:
-        print("[yellow i]Render Error, Please Restart")
+class archive():
+    def __init__(self):
+        table = Table(title="Archived Anime", box=box.ASCII2, safe_box=False, expand=True)
+        table.add_column("No.")
+        table.add_column("Name")
+        table.add_column("Episode Number")
+        table.add_column("View Status")
+        table.add_column("Ratings")
+        table.add_column("Notes")
+
+        if table.columns:
+            print(table)
+        else:
+            print("[yellow i]Render Error, Please Restart")
+        action()
 
 if __name__ == "__main__":
-    typer.run(archive)
+    archive_list = archive()
+
