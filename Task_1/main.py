@@ -3,6 +3,7 @@ import io
 import os
 import sys
 import json
+import sqlite3
 import typer
 import datetime
 from rich import print, box
@@ -12,6 +13,17 @@ from rich.layout import Layout
 from typing import Annotated
 from abc import ABC, abstractmethod
 from archive import archive
+
+#Database connection
+conn = sqlite3.connect("animate_tracker.db")
+cur = conn.cursor()
+res = cur.execute("SELECT name From sqlite_master")
+e = res.fetchone() is None
+if not(e):
+    pass
+else:
+    cur.execute("CREATE TABLE anime(name, startDate, Time, Cinema, UpdateWeekDay, UpdateTime, EpisodeNumber, ViewStatus, Special, ViewPlatform, Ratings, Notes)")
+'''
 #JSON file loader
 try:
     json_skeleton = {"name": "",
@@ -36,7 +48,7 @@ except IOError:
     sys.exit("Cannot open relative files!")
 except ValueError:
     sys.exit("Decode error")
-
+'''
 #anime class
 '''
 Name: Anime Name
