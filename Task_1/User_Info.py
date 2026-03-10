@@ -1,5 +1,5 @@
 import json
-
+import sqlite3
 info_name=[]
 info_status=[]
 info_platform=[]
