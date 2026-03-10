@@ -15,7 +15,7 @@ from abc import ABC, abstractmethod
 from archive import archive
 
 #Database connection
-conn = sqlite3.connect("animate_tracker.db")
+conn = sqlite3.connect("Task_1/animate_tracker.db")
 cur = conn.cursor()
 res = cur.execute("SELECT name From sqlite_master")
 e = res.fetchone() is None
