@@ -29,7 +29,7 @@ class WeeklyAnime(anime):
     def ViewMethod_set(self, method):
         self.ViewPlatform = method
         return "ViewPlatform updated successfully"
-
+    #test 
 #Create
 def save_data(data_list):
     "Save the data to json file"
