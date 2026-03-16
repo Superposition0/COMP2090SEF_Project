@@ -6,7 +6,7 @@
 |StartDate|str: The start airing date of such ANIME/MOVIE; Should be input as DD/MM/YYYY format|
 |Time|str: The start time of such MOVIE; Should be input as HH:MM format|
 |Cinema|str: The cinema to watch such MOVIE|
-|UpdateWeekDay|int: The update week day of such ANIME; Should be input as integer, e.g. 0=Sunday, 1=Monday etc.|
+|UpdateWeekDay|int: The update week day of such ANIME/MOVIE; Should be input as integer, e.g. 0=Sunday, 1=Monday etc.|
 |UpdateTime|str: The update time of such ANIME; Should be input as HH:MM format|
 |EpisodeNumber|int: The total episode number of such ANIME; Should be input as integer, e.g. 12=12 episodes|
 |ViewStatus|str: The view status of such ANIME/MOVIE; Only following status should exist: "Abandon", "Finish"|
