@@ -24,7 +24,7 @@ anime_note=[]
 glob_choice=''
 
 def get_file():
-    file_conn=sqlite3.connect('C:/Anime_Tracker/COMP2090SEF_Project/Task_1/animate_tracker.db')
+    file_conn=sqlite3.connect("C:/Anime_Tracker/COMP2090SEF_Project/Task_1/animate_tracker.db")
     file_cur=file_conn.cursor()
     file_cur.execute("SELECT Name FROM anime")
     list_input=file_cur.fetchall()
