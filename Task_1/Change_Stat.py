@@ -179,6 +179,4 @@ def main():
         print('[bold green]Please select the above attributes to change: [bold green]', end=' ')
         action=input()
 
-    
-
 main()
