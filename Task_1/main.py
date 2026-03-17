@@ -66,15 +66,11 @@ def main():
     #Episode Calculator
     def epCalc(SD):
         CD = currentDate.strftime("%d/%m/%Y")
-        CD = datetime.datetime.strptime(CD, "%d/%m/%Y")
-        SD = datetime.datetime.strptime(SD, "%d/%m/%Y")
-        diff = abs((SD-CD).days)
-        if diff%7 == 0:
-            return int((diff/7)+1)
-        elif diff%7 == 1:
-            return int((diff/7)+1)
-        elif diff%7 != 0:
-            return int((diff/7) + 2)
+        CD = datetime.datetime.strptime(CD, "%d/%m/%Y").isocalendar()[1]
+        SD = datetime.datetime.strptime(SD, "%d/%m/%Y").isocalendar()[1]
+        diff = (abs(SD-CD))+1
+        return diff
+
 
     #Welcome headerprint
     welcomeMessage = Text(r''''
@@ -88,53 +84,6 @@ def main():
     #Week view base template
     print(f"[green bold]Today is {DisplayDate}")
     table = Table(title="This Week Anime", box=box.ASCII2, safe_box=False, show_header=False, expand=True)
-
-
-    #Sunday
-    tableSun = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if WeekNum=="0" else "")
-    tableSun.add_column("Sunday", justify="left")
-
-    #SQL & fetch for weekly anime
-    cur.execute("""SELECT name, UpdateTime, StartDate, EpisodeNumber, ViewStatus, ViewPlatform FROM anime WHERE UpdateWeekDay = 0 AND StartDate <= ? AND ViewStatus = "" AND EpisodeNumber != "" ORDER BY UpdateTime""",(SQLDate, ))
-    output0 = cur.fetchall()
-    cur.execute("""SELECT name, StartDate, Time, Cinema, EpisodeNumber, UpdateWeekDay FROM anime WHERE
-    UpdateWeekDay = 0 AND StartDate >= ? AND ViewStatus = "" AND EpisodeNumber = "" ORDER BY Time""", (SQLDate, ))
-    output0c = cur.fetchall()
-
-    #Fetched item unpack into list
-    SunName = [item[0] for item in output0]
-    SunUTime = [item[1] for item in output0]
-    SunStartDate = [item[2] for item in output0]
-    SunTotalEpisode = [item[3] for item in output0]
-    SunViewPlatform = [item[5] for item in output0]
-
-    #SunEPCurrent: calculate current episode of such anime with func epCalc; SunEPExceed: if current episode number>total episode number of the anime = not listed
-    SunEPCurrent = list(map(epCalc, SunStartDate))
-    SunEPExceed = [i>=j for i, j in zip(SunTotalEpisode, SunEPCurrent)]
-    SunNameOnAir = []
-    SunTimeOnAir = []
-    SunEpisodeOnAir = []
-    SunVPOnAir = []
-    #Bind anime that should be listed into new lists
-    for i in range(len(SunEPExceed)):
-        if SunEPExceed[i] == True:
-            SunNameOnAir.append(SunName[i])
-            SunTimeOnAir.append(SunUTime[i])
-            SunEpisodeOnAir.append(SunEPCurrent[i])
-            SunVPOnAir.append(SunViewPlatform[i])
-    #Data render
-    for i,j,k,l in zip(SunNameOnAir, SunTimeOnAir, SunEpisodeOnAir,SunVPOnAir):
-        tableSun.add_row("{} \n[green]{} [blue]ep.{} \n[purple]{}".format(i,j,k,l))
-        tableSun.add_row("------")
-    #Fetched item unpack into list(movie)
-    SunCName = [item[0] for item in output0c]
-    SunCTime = [item[2] for item in output0c]
-    SunCCinema = [item[3] for item in output0c]
-    #Data render
-    for i,j,k in zip(SunCName, SunCTime, SunCCinema):
-        tableSun.add_row("{} \n[green]{} \n[yellow]@ {}".format(i,j,k))
-        tableSun.add_row("------")
-
 
     #Monday
     tableMon = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if WeekNum=="1" else "")
@@ -407,11 +356,55 @@ def main():
     for i,j,k in zip(SatCName, SatCTime, SatCCinema):
         tableSat.add_row("{} \n[green]{} \n[yellow]@ {}".format(i,j,k))
         tableSat.add_row("------")
+
+    #Sunday
+    tableSun = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if WeekNum=="0" else "")
+    tableSun.add_column("Sunday", justify="left")
+
+    #SQL & fetch for weekly anime
+    cur.execute("""SELECT name, UpdateTime, StartDate, EpisodeNumber, ViewStatus, ViewPlatform FROM anime WHERE UpdateWeekDay = 0 AND StartDate <= ? AND ViewStatus = "" AND EpisodeNumber != "" ORDER BY UpdateTime""",(SQLDate, ))
+    output0 = cur.fetchall()
+    cur.execute("""SELECT name, StartDate, Time, Cinema, EpisodeNumber, UpdateWeekDay FROM anime WHERE
+    UpdateWeekDay = 0 AND StartDate >= ? AND ViewStatus = "" AND EpisodeNumber = "" ORDER BY Time""", (SQLDate, ))
+    output0c = cur.fetchall()
+    #Fetched item unpack into list
+    SunName = [item[0] for item in output0]
+    SunUTime = [item[1] for item in output0]
+    SunStartDate = [item[2] for item in output0]
+    SunTotalEpisode = [item[3] for item in output0]
+    SunViewPlatform = [item[5] for item in output0]
+
+    #SunEPCurrent: calculate current episode of such anime with func epCalc; SunEPExceed: if current episode number>total episode number of the anime = not listed
+    SunEPCurrent = list(map(epCalc, SunStartDate))
+    SunEPExceed = [i>=j for i, j in zip(SunTotalEpisode, SunEPCurrent)]
+    SunNameOnAir = []
+    SunTimeOnAir = []
+    SunEpisodeOnAir = []
+    SunVPOnAir = []
+    #Bind anime that should be listed into new lists
+    for i in range(len(SunEPExceed)):
+        if SunEPExceed[i] == True:
+            SunNameOnAir.append(SunName[i])
+            SunTimeOnAir.append(SunUTime[i])
+            SunEpisodeOnAir.append(SunEPCurrent[i])
+            SunVPOnAir.append(SunViewPlatform[i])
+    #Data render
+    for i,j,k,l in zip(SunNameOnAir, SunTimeOnAir, SunEpisodeOnAir,SunVPOnAir):
+        tableSun.add_row("{} \n[green]{} [blue]ep.{} \n[purple]{}".format(i,j,k,l))
+        tableSun.add_row("------")
+    #Fetched item unpack into list(movie)
+    SunCName = [item[0] for item in output0c]
+    SunCTime = [item[2] for item in output0c]
+    SunCCinema = [item[3] for item in output0c]
+    #Data render
+    for i,j,k in zip(SunCName, SunCTime, SunCCinema):
+        tableSun.add_row("{} \n[green]{} \n[yellow]@ {}".format(i,j,k))
+        tableSun.add_row("------")
     conn.close()
     #Table printer
     for i in range(7):
         table.add_column()
-    table.add_row(tableSun,tableMon,tableTue,tableWed,tableThu,tableFri,tableSat)
+    table.add_row(tableMon,tableTue,tableWed,tableThu,tableFri,tableSat,tableSun)
 
     if table.columns:
         print(table)
