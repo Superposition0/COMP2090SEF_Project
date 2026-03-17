@@ -10,9 +10,9 @@ from archive import archive
 from pathlib import Path
 
 #Database connection
-root = Path(".")
-db_path = root / "Task_1"/ "animate_tracker.db"
-conn = sqlite3.connect("animate_tracker.db")
+dir_path = Path(os.path.dirname(__file__))
+root = dir_path / "animate_tracker.db"
+conn = sqlite3.connect(root)
 cur = conn.cursor()
 res = cur.execute("SELECT name From sqlite_master")
 e = res.fetchone() is None
@@ -76,7 +76,7 @@ def main():
         elif diff%7 != 0:
             return int((diff/7) + 2)
 
-    #Welcome header
+    #Welcome headerprint
     welcomeMessage = Text(r''''
                                                                  ___
  \    / _  |  _  _  ._ _   _    _|_  _     /\  ._  o ._ _   _     | ._ _.  _ |   _  ._ |
@@ -85,7 +85,6 @@ def main():
     welcomeMessage.stylize("bold magenta")
     os.system("clear || cls")
     print(welcomeMessage)
-    print(db_path.resolve())
     #Week view base template
     print(f"[green bold]Today is {DisplayDate}")
     table = Table(title="This Week Anime", box=box.ASCII2, safe_box=False, show_header=False, expand=True)
