@@ -72,7 +72,7 @@ def main():
         return diff
 
 
-    #Welcome header
+    #Welcome headerprint
     welcomeMessage = Text(r''''
                                                                  ___
  \    / _  |  _  _  ._ _   _    _|_  _     /\  ._  o ._ _   _     | ._ _.  _ |   _  ._ |
@@ -416,4 +416,3 @@ def main():
 
 if __name__ == "__main__":
     typer.run(main)
-
