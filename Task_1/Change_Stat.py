@@ -9,7 +9,7 @@ from typing import Annotated
 from abc import ABC, abstractmethod
 from archive import archive
 from pathlib import Path
-
+temp_list=[]
 anime_list=[]
 anime_stat=[]
 anime_plat=[]
@@ -35,6 +35,7 @@ def get_file():
     for item in list_input:
         item_str=str(item)
         anime_list.append(item_str.replace(",", "").replace("('", "").replace("')", ""))
+        temp_list.append(item_str.replace(",", "").replace("('", "").replace("')", ""))
     print(anime_list[0])
     file_cur.execute("SELECT ViewStatus FROM anime ORDER BY UpdateTime")
     list_stat=file_cur.fetchall()
@@ -154,6 +155,7 @@ class Anime:
             print('[yellow]Enter the change:[/yellow]', end=' ')
             new_value=input()
             anime_list[self.number]=new_value
+            print(anime_list[self.number])
         elif self.in_action=='episodes':
             print('[yellow]Enter the change:[/yellow]', end=' ')
             new_value=input()
@@ -197,8 +199,8 @@ class Anime:
 
 
 class AnimeChange:
-    def __init__(self, name, start, time, cinema, up_day, up_time, episodes, status, platform, rate, note):
-        self.name=anime_list
+    def __init__(self):
+        self.name=anime_list[choice]
         self.start=anime_date
         self.time=anime_time
         self.cinema=anime_cinema
@@ -209,9 +211,14 @@ class AnimeChange:
         self.platform=anime_plat
         self.rate=anime_rating
         self.note=anime_note
-
-    def change_info(self, input):
-        pass
+        dir_path = Path(os.path.dirname(__file__))
+        root = dir_path / "animate_tracker.db"
+        file_conn=sqlite3.connect(root)
+        file_cur=file_conn.cursor()
+        if action.lower()=='name':
+            file_cur.execute('UPDATE anime SET Name=? WHERE Name=?', (self.name, temp_list[choice-1], ))
+            file_conn.commit()
+            file_conn.close()
 
 
 row=0
@@ -256,5 +263,5 @@ else:
     print(anime.input_change(choice, action))
 
 
-anime_change=AnimeChange(anime_list, anime_date, anime_time, anime_cinema, anime_weekday, anime_upTime, anime_episode, anime_stat, anime_plat, anime_rating, anime_note)
+anime_change=AnimeChange()
 
