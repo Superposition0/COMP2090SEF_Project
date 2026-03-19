@@ -72,7 +72,7 @@ def main():
         return diff
 
 
-    #Welcome headerprint
+    #Welcome header
     welcomeMessage = Text(r''''
                                                                  ___
  \    / _  |  _  _  ._ _   _    _|_  _     /\  ._  o ._ _   _     | ._ _.  _ |   _  ._ |
