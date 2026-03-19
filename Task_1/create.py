@@ -35,7 +35,7 @@ def save_data(data_list):
     "Save the data to json file"
     with open(FILE_PATH, "w", encoding="utf-8") as f:
         json.dump(data_list, f)
-
+test
 def create_entry():
     "Add logic"
     print("Add New Anime")
