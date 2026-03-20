@@ -131,7 +131,7 @@ def info_display_TV(number):
     info_table.add_column('Special', justify='center')
     info_table.add_column('Rating', justify='center')
     info_table.add_column('Notes', justify='center')
-    
+
     info_table.add_row(anime_list[number], 
                        anime_stat[number], 
                        anime_plat[number], 
