@@ -83,9 +83,6 @@ def info_display_movie(number):
     info_table.add_column('Time', justify='center')
     info_table.add_column('Update Date', justify='center')
     info_table.add_column('Update Time', justify='center')
-    info_table.add_column('Special', justify='center')
-    info_table.add_column('Rating', justify='center')
-    info_table.add_column('Notes', justify='center')
 
     info_table.add_row(anime_list[number], 
                        anime_stat[number], 
