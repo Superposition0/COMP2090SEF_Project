@@ -1,13 +1,12 @@
+# Add prompts
+# Remove ratings and notes
+# Change 'cls' to 'cls || clear'
+
 import os
 import sqlite3
 import typer
 from rich import print, box
-from rich.text import Text
 from rich.table import Table
-from rich.layout import Layout
-from typing import Annotated
-from abc import ABC, abstractmethod
-from archive import archive
 from pathlib import Path
 
 temp_list=[]
@@ -20,11 +19,8 @@ anime_weekday=[]
 anime_upTime=[]
 anime_cinema=[]
 anime_episode=[]
-anime_special=[]
-anime_rating=[]
-anime_note=[]
-action_listTV=['name', 'start date', 'time', 'update weekday', 'update time', 'episodes', 'rating', 'notes', 'status', 'platform']
-action_listCinema=['name', 'start date', 'time', 'update weekday', 'update time', 'rating', 'notes', 'cinema', 'status', 'platform']
+action_listTV=['name', 'start date', 'time', 'update weekday', 'update time', 'episodes', 'status', 'platform']
+action_listCinema=['name', 'start date', 'time', 'update weekday', 'update time', 'cinema', 'status', 'platform']
 
 def get_file():
     dir_path = Path(os.path.dirname(__file__))
@@ -77,21 +73,6 @@ def get_file():
     for item in list_episode:
         item_str=str(item)
         anime_episode.append(item_str.replace(",", "").replace("('", "").replace("')", "").replace('(', '').replace(')', ''))
-    file_cur.execute("SELECT Special FROM anime ORDER BY UpdateTime")
-    list_special=file_cur.fetchall()
-    for item in list_special:
-        item_str=str(item)
-        anime_special.append(item_str.replace(",", "").replace("('", "").replace("')", ""))
-    file_cur.execute("SELECT Ratings FROM anime ORDER BY UpdateTime")
-    list_rating=file_cur.fetchall()
-    for item in list_rating:
-        item_str=str(item)
-        anime_rating.append(item_str.replace(",", "").replace("('", "").replace("')", ""))
-    file_cur.execute("SELECT Notes FROM anime ORDER BY UpdateTime")
-    list_note=file_cur.fetchall()
-    for item in list_note:
-        item_str=str(item)
-        anime_note.append(item_str.replace(",", "").replace("('", "").replace("')", ""))
 
 def info_display_movie(number):
     info_table=Table(title='Anime Movie', box=box.HEAVY)
@@ -102,9 +83,6 @@ def info_display_movie(number):
     info_table.add_column('Time', justify='center')
     info_table.add_column('Update Date', justify='center')
     info_table.add_column('Update Time', justify='center')
-    info_table.add_column('Special', justify='center')
-    info_table.add_column('Rating', justify='center')
-    info_table.add_column('Notes', justify='center')
 
     info_table.add_row(anime_list[number], 
                        anime_stat[number], 
@@ -112,10 +90,7 @@ def info_display_movie(number):
                        anime_date[number],
                        anime_time[number], 
                        anime_weekday[number],
-                       anime_upTime[number],
-                       anime_special[number],
-                       anime_rating[number],
-                       anime_note[number])
+                       anime_upTime[number])
     print(info_table, end='\n')
 
 def info_display_TV(number):
@@ -128,9 +103,6 @@ def info_display_TV(number):
     info_table.add_column('Time', justify='center')
     info_table.add_column('Update Date', justify='center')
     info_table.add_column('Update Time', justify='center')
-    info_table.add_column('Special', justify='center')
-    info_table.add_column('Rating', justify='center')
-    info_table.add_column('Notes', justify='center')
 
     info_table.add_row(anime_list[number], 
                        anime_stat[number], 
@@ -139,14 +111,11 @@ def info_display_TV(number):
                        anime_date[number],
                        anime_time[number], 
                        anime_weekday[number],
-                       anime_upTime[number],
-                       anime_special[number],
-                       anime_rating[number],
-                       anime_note[number])
+                       anime_upTime[number])
     print(info_table, end='\n')
 
 class Anime:
-    def __init__(self, name, start, time, cinema, up_day, up_time, episodes, status, platform, rate, note):
+    def __init__(self, name, start, time, cinema, up_day, up_time, episodes, status, platform):
         self.name=name
         self.start=start
         self.time=time
@@ -156,95 +125,60 @@ class Anime:
         self.episodes=episodes
         self.status=status
         self.platform=platform
-        self.rate=rate
-        self.note=note
 
-    def input_change(self, number,  in_action):
+    def input_change(self, number, in_action):
         self.in_action=in_action
         self.number=number
-        dir_path = Path(os.path.dirname(__file__))
-        root = dir_path / "animate_tracker.db"
-        file_conn=sqlite3.connect(root)
-        file_cur=file_conn.cursor()
         if self.in_action.lower()=='name':
-            print('[yellow]Enter the change:[/yellow]', end=' ')
+            print('[yellow]Enter the anime name:[/yellow]', end=' ')
             new_value=input()
-            file_cur.execute('UPDATE anime SET Name=? WHERE Name=?', (new_value, self.name, ))
             self.name=new_value
-            anime_list[self.number]=self.name
 
-        elif self.in_action=='episodes':
-            print('[yellow]Enter the change:[/yellow]', end=' ')
+        elif self.in_action.lower()=='episodes':
+            print('[yellow]Enter the episode number (Integer):[/yellow]', end=' ')
             new_value=input()
-            file_cur.execute('UPDATE anime SET EpisodeNumber=? WHERE Name=?', (new_value, self.name, ))
             self.episodes=new_value
-            anime_episode[self.number]=self.episodes
  
-        elif self.in_action=='cinema':
-            print('[yellow]Enter the change:[/yellow]', end=' ')
+        elif self.in_action.lower()=='cinema':
+            print('[yellow]Enter the cinema:[/yellow]', end=' ')
             new_value=input()
-            file_cur.execute('UPDATE anime SET Cinema=? WHERE Name=?', (new_value, self.name, ))
             self.cinema=new_value
-            anime_cinema[self.in_action]=self.cinema
 
-        elif self.in_action=='status':
-            print('[yellow]Enter the change:[/yellow]', end=' ')
-            new_value=input()
-            file_cur.execute('UPDATE anime SET ViewStatus=? WHERE Name=?', (new_value, self.name, ))
-            self.status=new_value
-            anime_stat[self.number]=self.status
+        elif self.in_action.lower()=='status':
+            allow=False
+            while allow==False:
+                print('[yellow]Enter the status (Watching / Abandoned):[/yellow]', end=' ')
+                new_value=input()
+                if new_value.lower()=='watching' or new_value.lower()=='abandoned':
+                    allow=True
+                else:
+                    print('[bold red]Invaild status.[/bold red]', end=' ')
+            self.status=new_value.capitalize()
 
-        elif self.in_action=='update weekday':
-            print('[yellow]Enter the change:[/yellow]', end=' ')
+        elif self.in_action.lower()=='update weekday':
+            print('[yellow]Enter the weekday:[/yellow]', end=' ')
             new_value=input()
-            file_cur.execute('UPDATE anime SET UpdateWeekDay=? WHERE Name=?', (new_value, self.name, ))
             self.up_day=new_value
-            anime_weekday[self.number]=self.up_day
 
-        elif self.in_action=='update time':
-            print('[yellow]Enter the change:[/yellow]', end=' ')
+        elif self.in_action.lower()=='update time':
+            print('[yellow]Enter the update time:[/yellow]', end=' ')
             new_value=input()
-            file_cur.execute('UPDATE anime SET UpdateTime=? WHERE Name=?', (new_value, self.name, ))
             self.up_time=new_value
-            anime_upTime[self.number]=self.up_time
-
-        elif self.in_action=='notes':
-            print('[yellow]Enter the change:[/yellow]', end=' ')
-            new_value=input()
-            file_cur.execute('UPDATE anime SET Notes=? WHERE Name=?', (new_value, self.name, ))
-            self.note=new_value
-            anime_note[self.number]=self.note
-
-        elif self.in_action=='rating':
-            print('[yellow]Enter the change:[/yellow]', end=' ')
-            new_value=input()
-            file_cur.execute('UPDATE anime SET Ratings=? WHERE Name=?', (new_value, self.name, ))
-            self.rate=new_value
-            anime_rating[self.number]=self.rate
             
-        elif self.in_action=='start date':
-            print('[yellow]Enter the change:[/yellow]', end=' ')
+        elif self.in_action.lower()=='start date':
+            print('[yellow]Enter the date:[/yellow]', end=' ')
             new_value=input()
-            file_cur.execute('UPDATE anime SET StartDate=? WHERE Name=?', (new_value, self.name, ))
             self.start=new_value
-            anime_date[self.number]=self.start
             
-        elif self.in_action=='platform':
-            print('[yellow]Enter the change:[/yellow]', end=' ')
+        elif self.in_action.lower()=='platform':
+            print('[yellow]Enter the platform:[/yellow]', end=' ')
             new_value=input()
-            file_cur.execute('UPDATE anime SET ViewPlatform=? WHERE Name=?', (new_value, self.name, ))
             self.platform=new_value
-            anime_plat[self.number]=self.platform
             
-        elif self.in_action=='time':
-            print('[yellow]Enter the change:[/yellow]', end=' ')
+        elif self.in_action.lower()=='time':
+            print('[yellow]Enter the time:[/yellow]', end=' ')
             new_value=input()
-            file_cur.execute('UPDATE anime SET Time=? WHERE Name=?', (new_value, self.name, ))
             self.time=new_value
-            anime_time[self.number]=self.time
-
-        file_conn.commit()
-        file_conn.close()
 
     def overview_TV(self):
         info_table=Table(title='TV Anime Change', box=box.HEAVY)
@@ -256,8 +190,6 @@ class Anime:
         info_table.add_column('Time', justify='center')
         info_table.add_column('Update Date', justify='center')
         info_table.add_column('Update Time', justify='center')
-        info_table.add_column('Rating', justify='center')
-        info_table.add_column('Notes', justify='center')
 
         info_table.add_row(self.name, 
                         self.status, 
@@ -266,9 +198,7 @@ class Anime:
                         self.start,
                         self.time, 
                         self.up_day,
-                        self.up_time,
-                        self.rate,
-                        self.note)
+                        self.up_time)
         print(info_table, end='\n')
 
     def overview_cinema(self):
@@ -280,8 +210,6 @@ class Anime:
         info_table.add_column('Time', justify='center')
         info_table.add_column('Update Date', justify='center')
         info_table.add_column('Update Time', justify='center')
-        info_table.add_column('Rating', justify='center')
-        info_table.add_column('Notes', justify='center')
 
         info_table.add_row(self.name, 
                         self.status, 
@@ -289,17 +217,59 @@ class Anime:
                         self.start,
                         self.time, 
                         self.up_day,
-                        self.up_time,
-                        self.rate,
-                        self.note)
+                        self.up_time)
         print(info_table, end='\n')
 
+    def change_table(self):
+        dir_path = Path(os.path.dirname(__file__))
+        root = dir_path / "animate_tracker.db"
+        file_conn=sqlite3.connect(root)
+        file_cur=file_conn.cursor()
+
+        if self.in_action.lower()=='name':
+            file_cur.execute('UPDATE anime SET Name=? WHERE Name=?', (self.name, anime_list[self.number], ))
+            anime_list[self.number]=self.name
+
+        if self.in_action.lower()=='start date':
+            file_cur.execute('UPDATE anime SET StartDate=? WHERE Name=?', (self.start, anime_list[self.number], ))
+            anime_date[self.number]=self.start
+
+        if self.in_action.lower()=='time':
+            file_cur.execute('UPDATE anime SET Time=? WHERE Name=?', (self.time, anime_list[self.number], ))
+            anime_time[self.number]=self.time
+
+        if self.in_action.lower()=='cinema':
+            file_cur.execute('UPDATE anime SET Cinema=? WHERE Name=?', (self.cinema, anime_list[self.number], ))
+            anime_cinema[self.number]=self.cinema
+
+        if self.in_action.lower()=='update weekday':
+            file_cur.execute('UPDATE anime SET UpdateWeekday=? WHERE Name=?', (self.up_day, anime_list[self.number], ))
+            anime_weekday[self.number]=self.up_day
+
+        if self.in_action.lower()=='update time':
+            file_cur.execute('UPDATE anime SET UpdateTime=? WHERE Name=?', (self.up_time, anime_list[self.number], ))
+            anime_upTime[self.number]=self.up_time
+        
+        if self.in_action.lower()=='episodes':
+            file_cur.execute('UPDATE anime SET EpisodeNumber=? WHERE Name=?', (self.episodes, anime_list[self.number], ))
+            anime_episode[self.number]=self.episodes
+
+        if self.in_action.lower()=='status':
+            file_cur.execute('UPDATE anime SET ViewStatus=? WHERE Name=?', (self.status, anime_list[self.number], ))
+            anime_stat[self.number]=self.status
+
+        if self.in_action.lower()=='platform':
+            file_cur.execute('UPDATE anime SET ViewPlatform=? WHERE Name=?', (self.platform, anime_list[self.number], ))
+            anime_plat[self.number]=self.platform
+
+        file_conn.commit()
+        file_conn.close()
 
 def main():
     get_file()
     program_run=True
     while program_run==True:
-        os.system('cls')
+        os.system('cls || clear')
         print('[bold green]Type in the number of the anime to select change.[/bold green] :popcorn:')
         anime_table=Table(title='Anime List', box=box.HEAVY)
         anime_table.add_column('[bold green]No.[/bold green]', justify='left', style='green')
@@ -319,20 +289,21 @@ def main():
         if anime_cinema[choice-1]=='':
             anime_loop=True
             while anime_loop==True:
-                os.system('cls')
+                os.system('cls || clear')
                 info_display_TV(choice-1)
                 print('[bold green]Please select the above attributes to change: [bold green]', end=' ')
                 action=input()
                 while action.lower() not in action_listTV:
                     print('[bold red]Invalid action, please try again:[/bold red]', end=' ')
                     action=input()
-                anime=Anime(anime_list[choice-1], anime_date[choice-1], anime_time[choice-1], anime_cinema[choice-1], anime_weekday[choice-1], anime_upTime[choice-1], anime_episode[choice-1], anime_stat[choice-1], anime_plat[choice-1], anime_rating[choice-1], anime_note[choice-1])
+                anime=Anime(anime_list[choice-1], anime_date[choice-1], anime_time[choice-1], anime_cinema[choice-1], anime_weekday[choice-1], anime_upTime[choice-1], anime_episode[choice-1], anime_stat[choice-1], anime_plat[choice-1])
                 anime.input_change(choice-1, action)
-                os.system('cls')
+                os.system('cls || clear')
                 anime.overview_TV()
-                print('[yellow]Do you want to confirm your change(s):[/yellow]', end=' ')
+                print('[yellow]Do you want to confirm your change(s) (Yes / No):[/yellow]', end=' ')
                 confirm_choice=input()
                 if confirm_choice.lower()=='yes':
+                    anime.change_table()
                     anime_loop=False
                 elif confirm_choice.lower()=='no':
                     anime_loop=True
@@ -340,26 +311,27 @@ def main():
         else:
             anime_loop=True
             while anime_loop==True:
-                os.system('cls')
+                os.system('cls || clear')
                 info_display_movie(choice-1)
                 print('[bold green]Please select the above attributes to change: [bold green]', end=' ')
                 action=input()
                 while action.lower() not in action_listCinema:
                     print('[bold red]Invalid action, please try again:[/bold red]', end=' ')
                     action=input()
-                anime=Anime(anime_list[choice-1], anime_date[choice-1], anime_time[choice-1], anime_cinema[choice-1], anime_weekday[choice-1], anime_upTime[choice-1], anime_episode[choice-1], anime_stat[choice-1], anime_plat[choice-1], anime_rating[choice-1], anime_note[choice-1])
+                anime=Anime(anime_list[choice-1], anime_date[choice-1], anime_time[choice-1], anime_cinema[choice-1], anime_weekday[choice-1], anime_upTime[choice-1], anime_episode[choice-1], anime_stat[choice-1], anime_plat[choice-1])
                 anime.input_change(choice-1, action)
-                os.system('cls')
+                os.system('cls || clear')
                 anime.overview_cinema()
                 print('[yellow]Do you want to confirm your change(s) (Yes / No):[/yellow]', end=' ')
-                print(len(anime_list))
                 confirm_choice=input()
                 if confirm_choice.lower()=='yes':
+                    anime.change_table()
                     anime_loop=False
+
                 elif confirm_choice.lower()=='no':
                     anime_loop=True
 
-        os.system('cls')
+        os.system('cls || clear')
         print('[yellow]Would you like to continue on changing info(s) (Yes / No):[/yellow]', end=' ')
         confirm_choice=input()
         if confirm_choice.lower()=='yes':
@@ -367,7 +339,7 @@ def main():
 
         elif confirm_choice.lower()=='no':
                 program_run=False
-                os.system('cls')
+                os.system('cls || clear')
 
 if __name__ == "__main__":
     typer.run(main)
