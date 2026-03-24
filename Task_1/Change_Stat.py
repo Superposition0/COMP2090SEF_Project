@@ -5,6 +5,7 @@ from rich import print, box
 from rich.table import Table
 from pathlib import Path
 
+# Set up the global variables
 temp_list=[]
 anime_list=[]
 anime_stat=[]
