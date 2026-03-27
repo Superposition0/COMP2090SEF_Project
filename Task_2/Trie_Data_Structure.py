@@ -1,5 +1,5 @@
+# Simulation of a searchbar using Trie data structure
 from pynput import keyboard
-import threading
 import time
 import os
 from pathlib import Path
@@ -40,36 +40,26 @@ def on_press(key):
 
 def car_result(query):
     # Comparing the typed string with the car models' names in the list.
+    os.system('cls||clear')
+    print(f'Search: {query}\n')
     if not query:
+        print('Type in any car model you like!')
         return []
     query_lower=query.lower()
     result_list=[car for car in car_model if query_lower in car.lower()]
-    os.system('cls||clear')
-    print(f'Search: {query}\n')
     if result_list:
         print('Search Result(s):\n')
         for i in range(len(result_list)):
             print(f'{i+1}) {result_list[i]}')
     else:
         print('No results found.')
-    
-def start_listener():
-    # Activating the keyboard listener, which links to every funciton in the code.
-    with keyboard.Listener(on_press=on_press) as listener:
-        listener.join()
-
 
 os.system('cls||clear')
-get_file()
-listener_thread = threading.Thread(target=start_listener, daemon=True)
-listener_thread.start()
-
 print('Welcome to the car gallery!\n')
-print('Type in any car you like!\n')
-try:
-    # time.sleep is used for continuely holding the thread, preventing the program from ending.
-    while running:
-        time.sleep(0.1)
-except KeyboardInterrupt:
-    pass
-print('Terminated searching process.')
+print('Type in any car model you like!\n')
+get_file()
+# Activate keyboard listener and record the keys typed.
+listener=keyboard.Listener(on_press=on_press)
+listener.start()
+listener.join()
+print('\nSearchbar program terminated.')
