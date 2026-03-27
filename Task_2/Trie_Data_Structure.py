@@ -26,20 +26,17 @@ def on_press(key):
         # Record and append typed letters into the array, including spcaes and backspaces.
         temp.append(key.char)
         query=''.join(temp)
-        result_list=car_result(query)
-        display_list(query, result_list)
+        car_result(query)
     except AttributeError:
         if key==keyboard.Key.space:
             temp.append(' ')
             query=''.join(temp)
-            result_list=car_result(query)
-            display_list(query, result_list)
+            car_result(query)
         elif key==keyboard.Key.backspace:
             if temp:
                 temp.pop()
                 query=''.join(temp)
-                result_list=car_result(query)
-                display_list(query, result_list)
+                car_result(query)
 
 def car_result(query):
     # Comparing the typed string with the car models' names in the list.
@@ -47,27 +44,26 @@ def car_result(query):
         return []
     query_lower=query.lower()
     result_list=[car for car in car_model if query_lower in car.lower()]
-    return result_list
-
-def display_list(query, result_list):
-     # Displaying the results in the terminal
-     os.system('cls')
-     print(f'Search: {query}\n')
-     if result_list:
-         print('Result(s):\n')
-         for i in range(len(result_list)):
-             print(f'{i+1}. {result_list[i]}')
-     else:
-         print('No results found.')
+    os.system('cls||clear')
+    print(f'Search: {query}\n')
+    if result_list:
+        print('Search Result(s):\n')
+        for i in range(len(result_list)):
+            print(f'{i+1}) {result_list[i]}')
+    else:
+        print('No results found.')
     
 def start_listener():
     # Activating the keyboard listener, which links to every funciton in the code.
     with keyboard.Listener(on_press=on_press) as listener:
         listener.join()
 
+
+os.system('cls||clear')
 get_file()
 listener_thread = threading.Thread(target=start_listener, daemon=True)
 listener_thread.start()
+
 print('Welcome to the car gallery!\n')
 print('Type in any car you like!\n')
 try:
