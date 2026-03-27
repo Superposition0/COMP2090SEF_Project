@@ -2,6 +2,7 @@ from pynput import keyboard
 import threading
 import time
 import os
+from pathlib import Path
 
 car_model=[]
 temp=[]
@@ -9,7 +10,9 @@ running=True
 
 def get_file():
     # This function is used for loading the datas of the csv file into the array.
-    with open('gran_turismo_gt7.csv', 'r', encoding='utf-8') as file:
+    dir_path=Path(os.path.dirname(__file__))
+    root=dir_path/'gran_turismo_gt7.csv'
+    with open(root, 'r', encoding='utf-8') as file:
         for line in file:
             car_model.append(line.strip().split(',')[0])
 
