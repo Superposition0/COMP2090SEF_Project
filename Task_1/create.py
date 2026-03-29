@@ -1,3 +1,15 @@
+import typer
+import sqlite3
+from rich.console import Console
+
+console = Console()
+app = typer.Typer()
+
+class anime:
+    def __init__(self, name, StartDate):
+        self.name = name
+        self.StartDate = StartDate
+
 class WeeklyAnime(anime):
     def __init__(self, name, StartDate, UpdateWeekDay, UpdateTime, EpisodeNumber, Special, ViewPlatform):
         super().__init__(name, StartDate)
@@ -30,12 +42,38 @@ class WeeklyAnime(anime):
         self.ViewPlatform = method
         return "ViewPlatform updated successfully"
 
-#Create
-def save_data(data_list):
-    "Save the data to json file"
-    with open(FILE_PATH, "w", encoding="utf-8") as f:
-        json.dump(data_list, f)
-test
+#Create sqllite
+DB_NAME = "anime_tracker.db"
+
+def save_to_sqlite(obj):
+    """Takes a WeeklyAnime object and saves it to the database"""
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    
+    # Create table if it not here
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS anime_list (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            start_date TEXT,
+            weekday TEXT,
+            time TEXT,
+            episodes TEXT,
+            special TEXT,
+            platform TEXT
+        )
+    """)
+    
+    # Insert data
+    cursor.execute("""
+        INSERT INTO anime_list (name, start_date, weekday, time, episodes, special, platform)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (obj.name, obj.StartDate, obj.UpdateWeekDay, obj.UpdateTime, obj.EpisodeNumber, obj.Special, obj.ViewPlatform))
+    
+    conn.commit()
+    conn.close()
+
+@app.command()
 def create_entry():
     "Add logic"
     print("Add New Anime")
@@ -54,21 +92,11 @@ def create_entry():
     # 7. view platform
     platform = typer.prompt("7. View platform")
 
-    #convert to jason
-    entry_data = {
-        "name": name,
-        "startDate": start_date,
-        "Time": "",             
-        "Cinema": "",     
-        "UpdateWeekDay": weekday,
-        "UpdateTime": u_time,
-        "EpisodeNumber": eps,
-        "Special": special,
-        "ViewPlatform": platform,
-        "Ratings": "",          
-        "Notes": ""           
-    }
+    new_anime_obj = WeeklyAnime(name, start_date, weekday, u_time, eps, special, platform)
 
-    AnimeTrack.append(entry_data)
-    save_data(AnimeTrack)
-    print(f"\n[green]Successfully created anime object: {name}![/green]")
+    save_to_sqlite(new_anime_obj)
+
+    console.print(f"\n[bold green]Successfully created and saved: {name}![/bold green]")
+
+if __name__ == "__main__":
+    app()
