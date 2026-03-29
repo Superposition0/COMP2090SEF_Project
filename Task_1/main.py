@@ -6,7 +6,8 @@ import datetime
 from rich import print, box
 from rich.text import Text
 from rich.table import Table
-from archive import archive
+from archive import main as aaa
+from Change_Stat import main as csm
 from pathlib import Path
 
 #Database connection
@@ -45,32 +46,32 @@ def router():
             ...
         elif action == "update":
             os.system("clear || cls")
-            ...
+            csm()
         elif action == "list":
             os.system("clear || cls")
-            archive()
+            aaa()
         elif action == "quit":
             os.system("clear || cls")
             typer.Exit()
         else:
-            print("Unsupported action, Please enter again.")
+            print("[red]Unsupported action, Please enter again.")
             return router()
 
-
-def main():
-    #Date getter and formatter
-    currentDate = datetime.datetime.now()
-    DisplayDate = currentDate.strftime("%d/%m/%Y, %A")
-    SQLDate = currentDate.strftime("%d/%m/%Y")
-    WeekNum = currentDate.strftime("%w")
-    #Episode Calculator
-    def epCalc(SD):
+currentDate = datetime.datetime.now()
+#Episode Calculator
+def epCalc(SD):
         CD = currentDate.strftime("%d/%m/%Y")
         CD = datetime.datetime.strptime(CD, "%d/%m/%Y").isocalendar()[1]
         SD = datetime.datetime.strptime(SD, "%d/%m/%Y").isocalendar()[1]
         diff = (abs(SD-CD))+1
         return diff
 
+def main():
+    #Date getter and formatter
+
+    DisplayDate = currentDate.strftime("%d/%m/%Y, %A")
+    SQLDate = currentDate.strftime("%d/%m/%Y")
+    WeekNum = currentDate.strftime("%w")
 
     #Welcome header
     welcomeMessage = Text(r''''
@@ -90,9 +91,9 @@ def main():
     tableMon.add_column("Monday", justify="left")
     #SQL & fetch for weekly anime
 
-    cur.execute("""SELECT name, UpdateTime, StartDate, EpisodeNumber, ViewStatus, ViewPlatform FROM anime WHERE UpdateWeekDay = 1 AND StartDate <= ? AND ViewStatus = "" AND EpisodeNumber != "" ORDER BY UpdateTime""",(SQLDate, ))
+    cur.execute("""SELECT Name, UpdateTime, StartDate, EpisodeNumber, ViewStatus, ViewPlatform FROM anime WHERE UpdateWeekDay = 1 AND StartDate <= ? AND ViewStatus = "" AND EpisodeNumber != "" ORDER BY UpdateTime""",(SQLDate, ))
     output1 = cur.fetchall()
-    cur.execute("""SELECT name, StartDate, Time, Cinema, EpisodeNumber, UpdateWeekDay FROM anime WHERE
+    cur.execute("""SELECT Name, StartDate, Time, Cinema, EpisodeNumber, UpdateWeekDay FROM anime WHERE
     UpdateWeekDay = 1 AND StartDate >= ? AND ViewStatus = "" AND EpisodeNumber = "" ORDER BY Time""", (SQLDate, ))
     output1c = cur.fetchall()
 
@@ -136,9 +137,9 @@ def main():
     tableTue.add_column("Tuesday", justify="left")
     #SQL & fetch for weekly anime
 
-    cur.execute("""SELECT name, UpdateTime, StartDate, EpisodeNumber, ViewStatus, ViewPlatform FROM anime WHERE UpdateWeekDay = 2 AND StartDate <= ? AND ViewStatus = "" AND EpisodeNumber != "" ORDER BY UpdateTime""",(SQLDate, ))
+    cur.execute("""SELECT Name, UpdateTime, StartDate, EpisodeNumber, ViewStatus, ViewPlatform FROM anime WHERE UpdateWeekDay = 2 AND StartDate <= ? AND ViewStatus = "" AND EpisodeNumber != "" ORDER BY UpdateTime""",(SQLDate, ))
     output2 = cur.fetchall()
-    cur.execute("""SELECT name, StartDate, Time, Cinema, EpisodeNumber, UpdateWeekDay FROM anime WHERE
+    cur.execute("""SELECT Name, StartDate, Time, Cinema, EpisodeNumber, UpdateWeekDay FROM anime WHERE
     UpdateWeekDay = 2 AND StartDate >= ? AND ViewStatus = "" AND EpisodeNumber = "" ORDER BY Time""", (SQLDate, ))
     output2c = cur.fetchall()
 
@@ -181,9 +182,9 @@ def main():
     tableWed = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if WeekNum=="3" else "")
     tableWed.add_column("Wednesday", justify="left")
     #SQL & fetch for weekly anime
-    cur.execute("""SELECT name, UpdateTime, StartDate, EpisodeNumber, ViewStatus, ViewPlatform FROM anime WHERE UpdateWeekDay = 3 AND StartDate <= ? AND ViewStatus = "" AND EpisodeNumber != "" ORDER BY UpdateTime""",(SQLDate, ))
+    cur.execute("""SELECT Name, UpdateTime, StartDate, EpisodeNumber, ViewStatus, ViewPlatform FROM anime WHERE UpdateWeekDay = 3 AND StartDate <= ? AND ViewStatus = "" AND EpisodeNumber != "" ORDER BY UpdateTime""",(SQLDate, ))
     output3 = cur.fetchall()
-    cur.execute("""SELECT name, StartDate, Time, Cinema, EpisodeNumber, UpdateWeekDay FROM anime WHERE
+    cur.execute("""SELECT Name, StartDate, Time, Cinema, EpisodeNumber, UpdateWeekDay FROM anime WHERE
     UpdateWeekDay = 3 AND StartDate >= ? AND ViewStatus = "" AND EpisodeNumber = "" ORDER BY Time""", (SQLDate, ))
     output3c = cur.fetchall()
 
@@ -227,9 +228,9 @@ def main():
     tableThu.add_column("Thursday", justify="left")
     #SQL & fetch for weekly anime
 
-    cur.execute("""SELECT name, UpdateTime, StartDate, EpisodeNumber, ViewStatus, ViewPlatform FROM anime WHERE UpdateWeekDay = 4 AND StartDate <= ? AND ViewStatus = "" AND EpisodeNumber != "" ORDER BY UpdateTime""",(SQLDate, ))
+    cur.execute("""SELECT Name, UpdateTime, StartDate, EpisodeNumber, ViewStatus, ViewPlatform FROM anime WHERE UpdateWeekDay = 4 AND StartDate <= ? AND ViewStatus = "" AND EpisodeNumber != "" ORDER BY UpdateTime""",(SQLDate, ))
     output4 = cur.fetchall()
-    cur.execute("""SELECT name, StartDate, Time, Cinema, EpisodeNumber, UpdateWeekDay FROM anime WHERE
+    cur.execute("""SELECT Name, StartDate, Time, Cinema, EpisodeNumber, UpdateWeekDay FROM anime WHERE
     UpdateWeekDay = 4 AND StartDate >= ? AND ViewStatus = "" AND EpisodeNumber = "" ORDER BY Time""", (SQLDate, ))
     output4c = cur.fetchall()
 
@@ -272,9 +273,9 @@ def main():
     tableFri = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if WeekNum=="5" else "")
     tableFri.add_column("Friday", justify="left")
     #SQL & fetch for weekly anime
-    cur.execute("""SELECT name, UpdateTime, StartDate, EpisodeNumber, ViewStatus, ViewPlatform FROM anime WHERE UpdateWeekDay = 5 AND StartDate <= ? AND ViewStatus = "" AND EpisodeNumber != "" ORDER BY UpdateTime""",(SQLDate, ))
+    cur.execute("""SELECT Name, UpdateTime, StartDate, EpisodeNumber, ViewStatus, ViewPlatform FROM anime WHERE UpdateWeekDay = 5 AND StartDate <= ? AND ViewStatus = "" AND EpisodeNumber != "" ORDER BY UpdateTime""",(SQLDate, ))
     output5 = cur.fetchall()
-    cur.execute("""SELECT name, StartDate, Time, Cinema, EpisodeNumber, UpdateWeekDay FROM anime WHERE
+    cur.execute("""SELECT Name, StartDate, Time, Cinema, EpisodeNumber, UpdateWeekDay FROM anime WHERE
     UpdateWeekDay = 5 AND StartDate >= ? AND ViewStatus = "" AND EpisodeNumber = "" ORDER BY Time""", (SQLDate, ))
     output5c = cur.fetchall()
 
@@ -317,9 +318,9 @@ def main():
     tableSat = Table(box=box.SIMPLE, safe_box=False, expand=True, style="on steel_blue" if WeekNum=="6" else "")
     tableSat.add_column("Saturday", justify="left")
     #SQL & fetch for weekly anime
-    cur.execute("""SELECT name, UpdateTime, StartDate, EpisodeNumber, ViewStatus, ViewPlatform FROM anime WHERE UpdateWeekDay = 6 AND StartDate <= ? AND ViewStatus = "" AND EpisodeNumber != "" ORDER BY UpdateTime""",(SQLDate, ))
+    cur.execute("""SELECT Name, UpdateTime, StartDate, EpisodeNumber, ViewStatus, ViewPlatform FROM anime WHERE UpdateWeekDay = 6 AND StartDate <= ? AND ViewStatus = "" AND EpisodeNumber != "" ORDER BY UpdateTime""",(SQLDate, ))
     output6 = cur.fetchall()
-    cur.execute("""SELECT name, StartDate, Time, Cinema, EpisodeNumber, UpdateWeekDay FROM anime WHERE
+    cur.execute("""SELECT Name, StartDate, Time, Cinema, EpisodeNumber, UpdateWeekDay FROM anime WHERE
     UpdateWeekDay = 6 AND StartDate >= ? AND ViewStatus = "" AND EpisodeNumber = "" ORDER BY Time""", (SQLDate, ))
     output6c = cur.fetchall()
 
@@ -362,9 +363,9 @@ def main():
     tableSun.add_column("Sunday", justify="left")
 
     #SQL & fetch for weekly anime
-    cur.execute("""SELECT name, UpdateTime, StartDate, EpisodeNumber, ViewStatus, ViewPlatform FROM anime WHERE UpdateWeekDay = 0 AND StartDate <= ? AND ViewStatus = "" AND EpisodeNumber != "" ORDER BY UpdateTime""",(SQLDate, ))
+    cur.execute("""SELECT Name, UpdateTime, StartDate, EpisodeNumber, ViewStatus, ViewPlatform FROM anime WHERE UpdateWeekDay = 0 AND StartDate <= ? AND ViewStatus = "" AND EpisodeNumber != "" ORDER BY UpdateTime""",(SQLDate, ))
     output0 = cur.fetchall()
-    cur.execute("""SELECT name, StartDate, Time, Cinema, EpisodeNumber, UpdateWeekDay FROM anime WHERE
+    cur.execute("""SELECT Name, StartDate, Time, Cinema, EpisodeNumber, UpdateWeekDay FROM anime WHERE
     UpdateWeekDay = 0 AND StartDate >= ? AND ViewStatus = "" AND EpisodeNumber = "" ORDER BY Time""", (SQLDate, ))
     output0c = cur.fetchall()
     #Fetched item unpack into list
@@ -409,7 +410,7 @@ def main():
     if table.columns:
         print(table)
     else:
-        print("[yellow i]Render Error, Please Restart")
+        print("[red i]Render Error, Please Restart")
 
     router()
 
