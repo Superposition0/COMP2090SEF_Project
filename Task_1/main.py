@@ -8,6 +8,7 @@ from rich.text import Text
 from rich.table import Table
 from archive import main as aaa
 from Change_Stat import main as csm
+#from create import main as cm
 from pathlib import Path
 
 #Database connection
@@ -68,7 +69,6 @@ def epCalc(SD):
 
 def main():
     #Date getter and formatter
-
     DisplayDate = currentDate.strftime("%d/%m/%Y, %A")
     SQLDate = currentDate.strftime("%d/%m/%Y")
     WeekNum = currentDate.strftime("%w")
@@ -402,16 +402,15 @@ def main():
         tableSun.add_row("{} \n[green]{} \n[yellow]@ {}".format(i,j,k))
         tableSun.add_row("------")
     conn.close()
+
     #Table printer
     for i in range(7):
         table.add_column()
     table.add_row(tableMon,tableTue,tableWed,tableThu,tableFri,tableSat,tableSun)
-
     if table.columns:
         print(table)
     else:
         print("[red i]Render Error, Please Restart")
-
     router()
 
 
