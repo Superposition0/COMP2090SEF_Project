@@ -29,6 +29,7 @@ class anime:
         self.ViewStatus = [item[1] for item in self.output]
         self.Ratings = [item[2] for item in self.output]
         self.Notes = [item[3] for item in self.output]
+
     #interface for changing rate
     def ratings_change(self, name):
         toBeChange = name
@@ -36,37 +37,34 @@ class anime:
         while flag == False:
             rate = int(typer.prompt("Enter the rate (out of 10)"))
             while rate< 0 or rate> 10:
+                print("[red]Rate is not in the range (0-10)")
                 rate = int(typer.prompt("Enter the rate (out of 10)"))
-            confirm = typer.prompt("Do you confirm this change?(Yes/No)")
-            confirm = confirm.strip()
-            confirm = confirm.lower()
-            if confirm == "yes":
+            confirm = typer.confirm("Do you confirm this change?")
+            if confirm == True:
                 flag = True
                 cur.execute("UPDATE anime SET Ratings = ? WHERE Name = ?",(rate, toBeChange))
                 print("Rated!")
                 conn.commit()
                 return "done"
-            elif confirm == "no":
+            elif confirm == False:
                 ...
+
     #interface for changing notes
     def notes_change(self, name):
         toBeChange = name
         flag = False
         while flag == False:
             notes = str(typer.prompt("Enter the notes"))
-            while len(notes) <= 0:
-                notes = str(typer.prompt("Enter the notes"))
-            confirm = typer.prompt("Do you confirm this change?(Yes/No)")
-            confirm = confirm.strip()
-            confirm = confirm.lower()
-            if confirm == "yes":
+            confirm = typer.confirm("Do you confirm this change?")
+            if confirm == True:
                 flag = True
                 cur.execute("UPDATE anime SET Notes = ? WHERE Name = ?",(notes, toBeChange))
                 print("Noted!")
                 conn.commit()
                 return "done"
-            elif confirm == "no":
+            elif confirm == False:
                 ...
+
     #sql data lists getter
     @property
     def name_get(self):
@@ -81,8 +79,6 @@ class anime:
     def notes_get(self):
         return list(self.Notes)
 
-
-
 def main():
     #table setter
     table = Table(title="Archived Anime", box=box.HEAVY, safe_box=False, expand=True, show_lines=True)
@@ -92,71 +88,77 @@ def main():
     table.add_column("Ratings")
     table.add_column("Notes")
 
+    #fetch data from object
     a = anime()
     Name = a.name_get
     ViewStatus = a.VS_get
     Ratings = a.ratings_get
     Notes = a.notes_get
     num = [n+1 for n in range(len(Name))] #number to show next to each entries
+
+    #data render
     for n,i,j,k,l in zip(num,Name,ViewStatus,Ratings,Notes):
             table.add_row("[green b]{}".format(n),"{}".format(i), "{}".format(j), "{}".format(k), "{}".format(l))
+
     if table.columns:
-        #prompt user to do action
         flag = False
         while flag == False:
             os.system("clear || cls")
             print(table)
+            #prompt user to do action
             action = typer.prompt("Enter Your Action (Rate/Note/Quit) ")
             action = action.strip()
             action = action.lower()
+            #if user want to rate
             if action == "rate":
                 rateNum = int(typer.prompt("Enter the no. of anime you want to rate"))
+                #check if the item exist
                 if rateNum > num[-1]:
-                    print("[red]Item not exist! Enter again")
+                    print("[red]Item not exist! Try again")
+                    time.sleep(0.5)
                     continue
+                #clear, show only selected anime and prompts
                 os.system("clear || cls")
                 print("[yellow i]Selected: ", Name[rateNum-1])
                 if a.ratings_change(Name[rateNum-1]) == "done":
-                    decision = typer.prompt("Want to do other changes? (Yes/No)")
-                    decision = decision.strip()
-                    decision = decision.lower()
-                    if decision == "yes":
+                    decision = typer.confirm("Want to do other changes?")
+                    if decision == True:
                         continue
-                    elif decision == "no":
+                    elif decision == False:
                         flag = True
-                    else:
-                        print("[red]Unsupported action, Please enter again.")
-                        time.sleep(0.5)
 
+            #if user want to note
             elif action == "note":
                 noteNum = int(typer.prompt("Enter the no. of anime you want to add note"))
+                #check if the item exist
                 if noteNum > num[-1]:
-                    print("[red]Item not exist! Enter again")
+                    print("[red]Item not exist! Try again")
+                    time.sleep(0.5)
                     continue
+                #clear, show only selected anime and prompts
                 os.system("clear || cls")
                 print("[yellow i]Selected: ", Name[noteNum-1])
                 if a.notes_change(Name[noteNum-1]) == "done":
-                    decision = typer.prompt("Want to do other changes? (Yes/No)")
-                    decision = decision.strip()
-                    decision = decision.lower()
-                    if decision == "yes":
+                    decision = typer.confirm("Want to do other changes?")
+                    if decision == True:
                         continue
-                    elif decision == "no":
+                    elif decision == False:
                         flag = True
-                    else:
-                        print("[red]Unsupported action, Please enter again.")
-                        time.sleep(0.5)
 
+            #if user want to quit
             elif action == "quit":
                 flag = True
                 os.system("clear || cls")
                 typer.Exit()
 
+            #if user enter other things
             else:
                 print("[red]Unsupported action, Please enter again.")
                 time.sleep(0.5)
     else:
         print("[red i]Render Error, Please Restart")
+
+    conn.close()
 
 
 
