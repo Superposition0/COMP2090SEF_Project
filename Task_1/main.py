@@ -8,6 +8,7 @@ from rich.text import Text
 from rich.table import Table
 from archive import main as aaa
 from Change_Stat import main as csm
+#from create import main as cm
 from pathlib import Path
 
 #Database connection
@@ -38,7 +39,7 @@ conn.commit()
 
 #After action received, redirect user to related module
 def router():
-        action = typer.prompt("Enter Your Action (Add/Update/List/Quit) ")
+        action = typer.prompt("Enter Your Action (Add/Update/Archive/Quit) ")
         action = action.strip()
         action = action.lower()
         if action == "add":
@@ -47,7 +48,7 @@ def router():
         elif action == "update":
             os.system("clear || cls")
             csm()
-        elif action == "list":
+        elif action == "archive":
             os.system("clear || cls")
             aaa()
         elif action == "quit":
@@ -68,7 +69,6 @@ def epCalc(SD):
 
 def main():
     #Date getter and formatter
-
     DisplayDate = currentDate.strftime("%d/%m/%Y, %A")
     SQLDate = currentDate.strftime("%d/%m/%Y")
     WeekNum = currentDate.strftime("%w")
@@ -402,17 +402,20 @@ def main():
         tableSun.add_row("{} \n[green]{} \n[yellow]@ {}".format(i,j,k))
         tableSun.add_row("------")
     conn.close()
+
     #Table printer
     for i in range(7):
         table.add_column()
     table.add_row(tableMon,tableTue,tableWed,tableThu,tableFri,tableSat,tableSun)
-
     if table.columns:
         print(table)
+        intro = Text("Add - Add a new anime to the tracker\nUpdate - Update an anime's details\nArchive - Show archived anime with ratings and notes\nQuit - Quit this app")
+        intro.stylize("light_steel_blue")
+        print(intro)
+        router()
     else:
         print("[red i]Render Error, Please Restart")
 
-    router()
 
 
 if __name__ == "__main__":
