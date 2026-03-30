@@ -1,12 +1,10 @@
 # Simulation of a searchbar using Trie data structure
 from pynput import keyboard
-import time
 import os
 from pathlib import Path
 
 car_model=[]
 temp=[]
-running=True
 
 def get_file():
     # This function is used for loading the datas of the csv file into the array.

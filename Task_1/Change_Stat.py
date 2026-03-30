@@ -7,6 +7,7 @@ from pathlib import Path
 
 # Set up the global variables
 temp_list=[]
+weekday_list=['0', '1', '2', '3', '4', '5', '6']
 anime_list=[]
 anime_stat=[]
 anime_plat=[]
@@ -16,8 +17,8 @@ anime_weekday=[]
 anime_upTime=[]
 anime_cinema=[]
 anime_episode=[]
-action_listTV=['name', 'start date', 'time', 'update date', 'update time', 'episodes', 'status', 'platform']
-action_listCinema=['name', 'start date', 'time', 'update date', 'update time', 'cinema', 'status', 'platform']
+action_listTV=['name', 'start date', 'time', 'weekday', 'update time', 'episodes', 'status', 'platform']
+action_listCinema=['name', 'start date', 'time', 'weekday', 'update time', 'cinema', 'status', 'platform']
 
 def get_file(): # Direct the code to the desired database file
     dir_path = Path(os.path.dirname(__file__))
@@ -26,6 +27,7 @@ def get_file(): # Direct the code to the desired database file
     file_cur=file_conn.cursor()
 
     # Append the items from the database into their seperate list to store data
+    # Each attribute has its own array to avoid complexity
     file_cur.execute("SELECT Name FROM anime WHERE ViewStatus='' ORDER BY UpdateTime")
     list_input=file_cur.fetchall()
     for item in list_input:
@@ -82,7 +84,7 @@ def info_display_movie(number):
     info_table.add_column('Cinema', justify='center')
     info_table.add_column('Date', justify='center')
     info_table.add_column('Time', justify='center')
-    info_table.add_column('Update Date', justify='center')
+    info_table.add_column('Weekday', justify='center')
     info_table.add_column('Update Time', justify='center')
 
     info_table.add_row(anime_list[number], 
@@ -104,7 +106,7 @@ def info_display_TV(number):
     info_table.add_column('Episodes', justify='center')
     info_table.add_column('Date', justify='center')
     info_table.add_column('Time', justify='center')
-    info_table.add_column('Update Date', justify='center')
+    info_table.add_column('Weekday', justify='center')
     info_table.add_column('Update Time', justify='center')
 
     info_table.add_row(anime_list[number], 
@@ -132,6 +134,7 @@ class Anime:
     def input_change(self, number, in_action): # Transfer the information to the below function and requires the user to input the new info into "new_value"
         self.in_action=in_action
         self.number=number
+        allow=False
         if self.in_action.lower()=='name':
             print('[yellow]Enter the anime name:[/yellow]', end=' ')
             new_value=input()
@@ -148,7 +151,6 @@ class Anime:
             self.cinema=new_value
 
         elif self.in_action.lower()=='status':
-            allow=False
             while allow==False:
                 print('[yellow]Enter the status (Finished / Abandoned):[/yellow]', end=' ')
                 new_value=input()
@@ -158,9 +160,14 @@ class Anime:
                     print('[bold red]Invaild status.[/bold red]', end=' ')
             self.status=new_value.capitalize()
 
-        elif self.in_action.lower()=='update date':
-            print('[yellow]Enter the weekday:[/yellow]', end=' ')
-            new_value=input()
+        elif self.in_action.lower()=='weekday':
+            while allow==False:
+                print('[yellow]Enter the weekday (Sunday = 0, Saturday = 6):[/yellow]', end=' ')
+                new_value=input()
+                if int(new_value)>-1 and int(new_value)<7:
+                    allow=True
+                elif int(new_value)<0 or int(new_value)>7:
+                    print('[bold red]Input out of range.[/bold red]', end=' ')
             self.up_day=new_value
 
         elif self.in_action.lower()=='update time':
@@ -191,7 +198,7 @@ class Anime:
         info_table.add_column('Episodes', justify='center')
         info_table.add_column('Date', justify='center')
         info_table.add_column('Time', justify='center')
-        info_table.add_column('Update Date', justify='center')
+        info_table.add_column('Weekday', justify='center')
         info_table.add_column('Update Time', justify='center')
 
         info_table.add_row(self.name, 
@@ -211,7 +218,7 @@ class Anime:
         info_table.add_column('Cinema', justify='center')
         info_table.add_column('Date', justify='center')
         info_table.add_column('Time', justify='center')
-        info_table.add_column('Update Date', justify='center')
+        info_table.add_column('Weekday', justify='center')
         info_table.add_column('Update Time', justify='center')
 
         info_table.add_row(self.name, 
@@ -247,7 +254,7 @@ class Anime:
             file_cur.execute('UPDATE anime SET Cinema=? WHERE Name=?', (self.cinema, anime_list[self.number], ))
             anime_cinema[self.number]=self.cinema
 
-        if self.in_action.lower()=='update date':
+        if self.in_action.lower()=='weekday':
             file_cur.execute('UPDATE anime SET UpdateWeekday=? WHERE Name=?', (self.up_day, anime_list[self.number], ))
             anime_weekday[self.number]=self.up_day
 
