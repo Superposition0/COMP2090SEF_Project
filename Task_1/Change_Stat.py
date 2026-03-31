@@ -20,12 +20,12 @@ anime_episode=[]
 action_listTV=['name', 'start date', 'time', 'weekday', 'update time', 'episodes', 'status', 'platform']
 action_listCinema=['name', 'start date', 'time', 'weekday', 'update time', 'cinema', 'status', 'platform']
 
-def get_file(): # Direct the code to the desired database file
-    dir_path = Path(os.path.dirname(__file__))
-    root = dir_path / "animate_tracker.db"
-    file_conn=sqlite3.connect(root)
-    file_cur=file_conn.cursor()
+dir_path = Path(os.path.dirname(__file__)) # Direct the code to the desired database file
+root = dir_path / "animate_tracker.db"
+file_conn = sqlite3.connect(root)
+file_cur = file_conn.cursor()
 
+def get_file():
     # Append the items from the database into their seperate list to store data
     # Each attribute has its own array to avoid complexity
     file_cur.execute("SELECT Name FROM anime WHERE ViewStatus='' ORDER BY UpdateTime")
@@ -74,6 +74,7 @@ def get_file(): # Direct the code to the desired database file
     for item in list_episode:
         item_str=str(item)
         anime_episode.append(item_str.replace(",", "").replace("('", "").replace("')", "").replace('(', '').replace(')', ''))
+
 
 def info_display_movie(number):
 # Display the information if the show is a movie
@@ -232,11 +233,6 @@ class Anime:
 
 # Send the new info to the SQL execution, in order for the database to update and upload changes made by the user
     def change_table(self):
-        dir_path = Path(os.path.dirname(__file__))
-        root = dir_path / "animate_tracker.db"
-        file_conn=sqlite3.connect(root)
-        file_cur=file_conn.cursor()
-
 # CHanges are made depends on the name of the show (Primary Key)
         if self.in_action.lower()=='name':
             file_cur.execute('UPDATE anime SET Name=? WHERE Name=?', (self.name, anime_list[self.number], ))
@@ -275,9 +271,11 @@ class Anime:
             anime_plat[self.number]=self.platform
 
         file_conn.commit()
-        file_conn.close()
-
+        
 def main():
+    global file_conn, file_cur
+    file_conn = sqlite3.connect(root)
+    file_cur = file_conn.cursor()
     get_file()
     program_run=True
     while program_run==True: # The program will contiue to run as long the boolean value is true
@@ -354,4 +352,5 @@ def main():
                 os.system('cls || clear')
 
 if __name__ == "__main__":
-    typer.run(main)
+    main()
+    file_conn.close()
