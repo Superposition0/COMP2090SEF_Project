@@ -352,5 +352,5 @@ def main():
                 os.system('cls || clear')
 
 if __name__ == "__main__":
-    main()
+    typer.run(main)
     file_conn.close()

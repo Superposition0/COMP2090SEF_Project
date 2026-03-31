@@ -12,12 +12,6 @@ dir_path = Path(os.path.dirname(__file__))
 root = dir_path / "animate_tracker.db"
 conn = sqlite3.connect(root)
 cur = conn.cursor()
-res = cur.execute("SELECT name From sqlite_master")
-e = res.fetchone() is None
-if not(e):
-    ...
-else:
-    print("[red i]Database Error! Please Restart")
 
 #create class: anime
 class anime:

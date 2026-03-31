@@ -401,7 +401,7 @@ def main():
     for i,j,k in zip(SunCName, SunCTime, SunCCinema):
         tableSun.add_row("{} \n[green]{} \n[yellow]@ {}".format(i,j,k))
         tableSun.add_row("------")
-    conn.close()
+    #conn.close()
 
     #Table printer
     for i in range(7):
