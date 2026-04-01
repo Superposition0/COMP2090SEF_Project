@@ -81,7 +81,7 @@ def create_entry():
     name = typer.prompt("1. Name")
     start_date = typer.prompt("2. Start date (DD/MM/YYYY)")
     
-    status = typer.prompt("Status (Finish/Abandon)", default="Finish")
+    status = typer.prompt("Status (Finish/Abandon)", default="Finisheed")
     rating = typer.prompt("Rating (1-10)", default=0, type=int)
     notes = typer.prompt("Notes", default="None")
 
