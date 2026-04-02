@@ -32,7 +32,7 @@ cur.execute("""
 conn.commit()
 
 class Anime:
-    def __init__(self, name, StartDate, view_status="Finish", ratings=0, notes="None"):
+    def __init__(self, name, StartDate, view_status="Finish", ratings=0, notes=""):
         self.name = name
         self.StartDate = StartDate
         self.view_status = view_status
@@ -58,14 +58,14 @@ class AnimeMovie(Anime):
 def save_to_sqlite(obj):
     if isinstance(obj, WeeklyAnime):
         data = (
-            obj.name, obj.StartDate, None, None, obj.UpdateWeekDay, 
+            obj.name, obj.StartDate, "", "", obj.UpdateWeekDay, 
             obj.UpdateTime, obj.EpisodeNumber, obj.view_status, 
             obj.Special, obj.ViewPlatform, obj.ratings, obj.notes
         )
     elif isinstance(obj, AnimeMovie):
         data = (
-            obj.name, obj.StartDate, obj.ScreenTime, obj.Cinema, None, 
-            None, None, obj.view_status, "None", obj.ViewPlatform, 
+            obj.name, obj.StartDate, obj.ScreenTime, obj.Cinema, "", 
+            "", "", obj.view_status, "", obj.ViewPlatform, 
             obj.ratings, obj.notes
         )
     
@@ -80,22 +80,18 @@ def create_entry():
 
     name = typer.prompt("1. Name")
     start_date = typer.prompt("2. Start date (DD/MM/YYYY)")
-    
-    status = typer.prompt("Status (Finish/Abandon)", default="Finisheed")
-    rating = typer.prompt("Rating (1-10)", default=0, type=int)
-    notes = typer.prompt("Notes", default="None")
 
     if not is_movie:
         weekday = typer.prompt("3. Update weekday (0=Sun, 1=Mon, etc.)", type=int)
         u_time = typer.prompt("4. Update time (HH:MM)")
         eps = typer.prompt("5. Episode number", type=int)
         platform = typer.prompt("6. View platform")
-        new_obj = WeeklyAnime(name, start_date, weekday, u_time, eps, "None", platform, view_status=status, ratings=rating, notes=notes)
+        new_obj = WeeklyAnime(name, start_date, weekday, u_time, eps, "", platform)
     else:
         u_time = typer.prompt("3. Screening time (HH:MM)") 
         cinema = typer.prompt("4. Cinema location") 
         platform = typer.prompt("5. View platform") 
-        new_obj = AnimeMovie(name, start_date, u_time, cinema, platform, view_status=status, ratings=rating, notes=notes)
+        new_obj = AnimeMovie(name, start_date, u_time, cinema, platform)
 
     save_to_sqlite(new_obj)
     console.print(f"\n[bold green]Successfully saved: {name}![/bold green]")
