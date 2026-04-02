@@ -2,120 +2,106 @@ import typer
 import sqlite3
 import os
 from rich.console import Console
+from pathlib import Path
 
 console = Console()
 app = typer.Typer()
 
-class anime:
-    def __init__(self, name, StartDate):
+# Setup database path
+dir_path = Path(os.path.dirname(__file__))
+root = dir_path / "animate_tracker.db"
+conn = sqlite3.connect(root)
+cur = conn.cursor()
+
+cur.execute("""
+    CREATE TABLE IF NOT EXISTS anime (
+        Name TEXT PRIMARY KEY,
+        StartDate TEXT,
+        Time TEXT,
+        Cinema TEXT,
+        UpdateWeekDay INTEGER,
+        UpdateTime TEXT,
+        EpisodeNumber INTEGER,
+        ViewStatus TEXT,
+        Special TEXT,
+        ViewPlatform TEXT,
+        Ratings INTEGER,
+        Notes TEXT
+    )
+""")
+conn.commit()
+
+class Anime:
+    def __init__(self, name, StartDate, view_status="Finish", ratings=0, notes="None"):
         self.name = name
         self.StartDate = StartDate
+        self.view_status = view_status
+        self.ratings = ratings
+        self.notes = notes
 
-class WeeklyAnime(anime):
-    def __init__(self, name, StartDate, UpdateWeekDay, UpdateTime, EpisodeNumber, Special, ViewPlatform):
-        super().__init__(name, StartDate)
+class WeeklyAnime(Anime):
+    def __init__(self, name, StartDate, UpdateWeekDay, UpdateTime, EpisodeNumber, Special, ViewPlatform, **kwargs):
+        super().__init__(name, StartDate, **kwargs)
         self.UpdateWeekDay = UpdateWeekDay
         self.UpdateTime = UpdateTime
         self.EpisodeNumber = EpisodeNumber
         self.Special = Special
         self.ViewPlatform = ViewPlatform
 
-    def UpdateWeekDay_get(self):
-        return self.UpdateWeekDay
-    def UpdateWeekDay_set(self, weekday):
-        self.UpdateWeekDay = weekday
-    def time_get(self):
-        return self.UpdateTime
-    def time_set(self, time):
-        self.UpdateTime = time
-        return "UpdateTime updated successfully"
-    def EpisodeNumber_get(self):
-        return self.EpisodeNumber
-    def EpisodeNumber_set(self, episodenumber):
-        self.EpisodeNumber = episodenumber
-    def Special_get(self):
-        return self.Special
-    def Special_set(self, special):
-        self.Special = special
-    def ViewMethod_get(self):
-        return self.ViewPlatform
-    def ViewMethod_set(self, method):
-        self.ViewPlatform = method
-        return "ViewPlatform updated successfully"
-
-class AnimeMovie(anime): 
-    def __init__(self, name, StartDate, ScreenTime, Cinema, ViewPlatform): 
-        super().__init__(name, StartDate) 
+class AnimeMovie(Anime): 
+    def __init__(self, name, StartDate, ScreenTime, Cinema, ViewPlatform, **kwargs): 
+        super().__init__(name, StartDate, **kwargs) 
         self.ScreenTime = ScreenTime 
         self.Cinema = Cinema 
         self.ViewPlatform = ViewPlatform 
 
-# Database Configuration
-DB_NAME = "anime_tracker.db"
-
 def save_to_sqlite(obj):
-    """Takes an anime object and saves it to the database"""
-    with sqlite3.connect(DB_NAME) as conn:
-        cursor = conn.cursor()
+    if isinstance(obj, WeeklyAnime):
+        data = (
+            obj.name, obj.StartDate, None, None, obj.UpdateWeekDay, 
+            obj.UpdateTime, obj.EpisodeNumber, obj.view_status, 
+            obj.Special, obj.ViewPlatform, obj.ratings, obj.notes
+        )
+    elif isinstance(obj, AnimeMovie):
+        data = (
+            obj.name, obj.StartDate, obj.ScreenTime, obj.Cinema, None, 
+            None, None, obj.view_status, "None", obj.ViewPlatform, 
+            obj.ratings, obj.notes
+        )
     
-        # Create table with necessary columns for both types
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS anime_list (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                type TEXT,
-                name TEXT,
-                start_date TEXT,
-                weekday TEXT,
-                time TEXT,
-                episodes TEXT,
-                special TEXT,
-                platform TEXT
-            )
-        """)
-        
-        # Check object type and insert accordingly
-        if isinstance(obj, WeeklyAnime):
-            cursor.execute("""
-                INSERT INTO anime_list (type, name, start_date, weekday, time, episodes, special, platform)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, ("Weekly", obj.name, obj.StartDate, obj.UpdateWeekDay, obj.UpdateTime, obj.EpisodeNumber, obj.Special, obj.ViewPlatform)) 
-        elif isinstance(obj, AnimeMovie): 
-            cursor.execute("""
-                INSERT INTO anime_list (type, name, start_date, time, special, platform)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, ("Movie", obj.name, obj.StartDate, obj.ScreenTime, obj.Cinema, obj.ViewPlatform)) 
-
-        conn.commit()
+    # Use REPLACE to handle updates to existing names
+    cur.execute("INSERT OR REPLACE INTO anime VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data)
+    conn.commit()
 
 @app.command()
 def create_entry():
-    """Main logic to prompt user and save data"""
     console.print("[bold cyan]Add New Entry[/bold cyan]")
     is_movie = typer.confirm("Is this a movie?")
 
-    # Common fields
     name = typer.prompt("1. Name")
-    start_date = typer.prompt("2. Start airing date (DD/MM/YYYY)")
+    start_date = typer.prompt("2. Start date (DD/MM/YYYY)")
     
+    status = typer.prompt("Status (Finish/Abandon)", default="Finisheed")
+    rating = typer.prompt("Rating (1-10)", default=0, type=int)
+    notes = typer.prompt("Notes", default="None")
+
     if not is_movie:
-        # Weekly Series fields
-        weekday = typer.prompt("3. Update per ? day (e.g., Monday)")
-        u_time = typer.prompt("4. Update at ? time (HH:MM)")
-        eps = typer.prompt("5. Episode number")
-        special = typer.prompt("6. Special arrangements", default="None")
-        platform = typer.prompt("7. View platform")
-        new_obj = WeeklyAnime(name, start_date, weekday, u_time, eps, special, platform)
+        weekday = typer.prompt("3. Update weekday (0=Sun, 1=Mon, etc.)", type=int)
+        u_time = typer.prompt("4. Update time (HH:MM)")
+        eps = typer.prompt("5. Episode number", type=int)
+        platform = typer.prompt("6. View platform")
+        new_obj = WeeklyAnime(name, start_date, weekday, u_time, eps, "None", platform, view_status=status, ratings=rating, notes=notes)
     else:
-        # Movie fields
-        u_time = typer.prompt("3. Screening time") 
+        u_time = typer.prompt("3. Screening time (HH:MM)") 
         cinema = typer.prompt("4. Cinema location") 
         platform = typer.prompt("5. View platform") 
-        new_obj = AnimeMovie(name, start_date, u_time, cinema, platform)
+        new_obj = AnimeMovie(name, start_date, u_time, cinema, platform, view_status=status, ratings=rating, notes=notes)
 
-    # Save the created object
     save_to_sqlite(new_obj)
-
-    console.print(f"\n[bold green]Successfully created and saved: {name}![/bold green]")
+    console.print(f"\n[bold green]Successfully saved: {name}![/bold green]")
 
 if __name__ == "__main__":
-    app()
+    try:
+        app()
+    finally:
+        conn.close()
