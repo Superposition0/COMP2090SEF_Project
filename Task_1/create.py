@@ -1,6 +1,7 @@
 import typer
 import sqlite3
 import os
+import datetime
 from rich.console import Console
 from pathlib import Path
 
@@ -13,26 +14,8 @@ root = dir_path / "animate_tracker.db"
 conn = sqlite3.connect(root)
 cur = conn.cursor()
 
-cur.execute("""
-    CREATE TABLE IF NOT EXISTS anime (
-        Name TEXT PRIMARY KEY,
-        StartDate TEXT,
-        Time TEXT,
-        Cinema TEXT,
-        UpdateWeekDay INTEGER,
-        UpdateTime TEXT,
-        EpisodeNumber INTEGER,
-        ViewStatus TEXT,
-        Special TEXT,
-        ViewPlatform TEXT,
-        Ratings INTEGER,
-        Notes TEXT
-    )
-""")
-conn.commit()
-
 class Anime:
-    def __init__(self, name, StartDate, view_status="Finish", ratings=0, notes=""):
+    def __init__(self, name, StartDate, view_status="", ratings="", notes=""):
         self.name = name
         self.StartDate = StartDate
         self.view_status = view_status
@@ -48,27 +31,28 @@ class WeeklyAnime(Anime):
         self.Special = Special
         self.ViewPlatform = ViewPlatform
 
-class AnimeMovie(Anime): 
-    def __init__(self, name, StartDate, ScreenTime, Cinema, ViewPlatform, **kwargs): 
-        super().__init__(name, StartDate, **kwargs) 
-        self.ScreenTime = ScreenTime 
-        self.Cinema = Cinema 
-        self.ViewPlatform = ViewPlatform 
+class AnimeMovie(Anime):
+    def __init__(self, name, StartDate, ScreenTime, Cinema, **kwargs):
+        super().__init__(name, StartDate, **kwargs)
+        self.ScreenTime = ScreenTime
+        self.Cinema = Cinema
 
 def save_to_sqlite(obj):
     if isinstance(obj, WeeklyAnime):
         data = (
-            obj.name, obj.StartDate, "", "", obj.UpdateWeekDay, 
-            obj.UpdateTime, obj.EpisodeNumber, obj.view_status, 
+            obj.name, obj.StartDate, "", "", obj.UpdateWeekDay,
+            obj.UpdateTime, obj.EpisodeNumber, obj.view_status,
             obj.Special, obj.ViewPlatform, obj.ratings, obj.notes
         )
     elif isinstance(obj, AnimeMovie):
+        toBeProcessed = datetime.datetime.strptime(obj.StartDate, "%d/%m/%Y")
+        processed = toBeProcessed.strftime("%w")
         data = (
-            obj.name, obj.StartDate, obj.ScreenTime, obj.Cinema, "", 
-            "", "", obj.view_status, "", obj.ViewPlatform, 
+            obj.name, obj.StartDate, obj.ScreenTime, obj.Cinema, processed,
+            "", "", obj.view_status, "", "",
             obj.ratings, obj.notes
         )
-    
+
     # Use REPLACE to handle updates to existing names
     cur.execute("INSERT OR REPLACE INTO anime VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data)
     conn.commit()
@@ -88,10 +72,9 @@ def create_entry():
         platform = typer.prompt("6. View platform")
         new_obj = WeeklyAnime(name, start_date, weekday, u_time, eps, "", platform)
     else:
-        u_time = typer.prompt("3. Screening time (HH:MM)") 
-        cinema = typer.prompt("4. Cinema location") 
-        platform = typer.prompt("5. View platform") 
-        new_obj = AnimeMovie(name, start_date, u_time, cinema, platform)
+        u_time = typer.prompt("3. Screening time (HH:MM)")
+        cinema = typer.prompt("4. Cinema location")
+        new_obj = AnimeMovie(name, start_date, u_time, cinema)
 
     save_to_sqlite(new_obj)
     console.print(f"\n[bold green]Successfully saved: {name}![/bold green]")
