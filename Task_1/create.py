@@ -14,24 +14,6 @@ root = dir_path / "animate_tracker.db"
 conn = sqlite3.connect(root)
 cur = conn.cursor()
 
-cur.execute("""
-    CREATE TABLE IF NOT EXISTS anime (
-        Name TEXT PRIMARY KEY,
-        StartDate TEXT,
-        Time TEXT,
-        Cinema TEXT,
-        UpdateWeekDay INTEGER,
-        UpdateTime TEXT,
-        EpisodeNumber INTEGER,
-        ViewStatus TEXT,
-        Special TEXT,
-        ViewPlatform TEXT,
-        Ratings INTEGER,
-        Notes TEXT
-    )
-""")
-conn.commit()
-
 class Anime:
     def __init__(self, name, StartDate, view_status="", ratings="", notes=""):
         self.name = name

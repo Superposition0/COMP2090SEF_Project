@@ -8,7 +8,7 @@ from rich.text import Text
 from rich.table import Table
 from archive import main as aaa
 from Change_Stat import main as csm
-#from create import main as cm
+from create import create_entry as cm
 from pathlib import Path
 
 #Database connection
@@ -44,7 +44,7 @@ def router():
         action = action.lower()
         if action == "add":
             os.system("clear || cls")
-            ...
+            cm()
         elif action == "update":
             os.system("clear || cls")
             csm()
@@ -67,11 +67,18 @@ def epCalc(SD):
         diff = (abs(SD-CD))+1
         return diff
 
+def weekNumCalc(SD):
+    toBeProcess = datetime.datetime.strptime(SD, "%d/%m/%Y")
+    processed = toBeProcess.strftime("%W")
+    return processed
+
 def main():
     #Date getter and formatter
     DisplayDate = currentDate.strftime("%d/%m/%Y, %A")
     SQLDate = currentDate.strftime("%d/%m/%Y")
     WeekNum = currentDate.strftime("%w")
+    CurrWeekNum = currentDate.strftime("%W")
+
 
     #Welcome header
     welcomeMessage = Text(r''''
@@ -98,11 +105,27 @@ def main():
     output1c = cur.fetchall()
 
     #Fetched item unpack into list
-    MonName = [item[0] for item in output1]
-    MonUTime = [item[1] for item in output1]
-    MonStartDate = [item[2] for item in output1]
-    MonTotalEpisode = [item[3] for item in output1]
-    MonViewPlatform = [item[5] for item in output1]
+    bMonName = [item[0] for item in output1]
+    bMonUTime = [item[1] for item in output1]
+    bMonStartDate = [item[2] for item in output1]
+    bMonTotalEpisode = [item[3] for item in output1]
+    bMonViewPlatform = [item[5] for item in output1]
+
+    #Determine if the anime start date is on the same week or later of the current date
+    MonWeekNum = list(map(weekNumCalc, bMonStartDate))
+    MonWeekNumCompare = [True if x <= CurrWeekNum else False for x in MonWeekNum]
+    MonName = []
+    MonUTime = []
+    MonStartDate = []
+    MonTotalEpisode = []
+    MonViewPlatform = []
+    for i in range(len(MonWeekNumCompare)):
+        if MonWeekNumCompare[i] == True:
+            MonName.append(bMonName[i])
+            MonUTime.append(bMonUTime[i])
+            MonStartDate.append(bMonStartDate[i])
+            MonTotalEpisode.append(bMonTotalEpisode[i])
+            MonViewPlatform.append(bMonViewPlatform[i])
 
     #MonEPCurrent: calculate current episode of such anime with func epCalc; MonEPExceed: if current episode number>total episode number of the anime = not listed
     MonEPCurrent = list(map(epCalc, MonStartDate))
@@ -144,11 +167,27 @@ def main():
     output2c = cur.fetchall()
 
     #Fetched item unpack into list
-    TueName = [item[0] for item in output2]
-    TueUTime = [item[1] for item in output2]
-    TueStartDate = [item[2] for item in output2]
-    TueTotalEpisode = [item[3] for item in output2]
-    TueViewPlatform = [item[5] for item in output2]
+    bTueName = [item[0] for item in output2]
+    bTueUTime = [item[1] for item in output2]
+    bTueStartDate = [item[2] for item in output2]
+    bTueTotalEpisode = [item[3] for item in output2]
+    bTueViewPlatform = [item[5] for item in output2]
+
+    #Determine if the anime start date is on the same week or later of the current date
+    TueWeekNum = list(map(weekNumCalc, bTueStartDate))
+    TueWeekNumCompare = [True if x <= CurrWeekNum else False for x in TueWeekNum]
+    TueName = []
+    TueUTime = []
+    TueStartDate = []
+    TueTotalEpisode = []
+    TueViewPlatform = []
+    for i in range(len(TueWeekNumCompare)):
+        if TueWeekNumCompare[i] == True:
+            TueName.append(bTueName[i])
+            TueUTime.append(bTueUTime[i])
+            TueStartDate.append(bTueStartDate[i])
+            TueTotalEpisode.append(bTueTotalEpisode[i])
+            TueViewPlatform.append(bTueViewPlatform[i])
 
     #TueEPCurrent: calculate current episode of such anime with func epCalc; TueEPExceed: if current episode number>total episode number of the anime = not listed
     TueEPCurrent = list(map(epCalc, TueStartDate))
@@ -189,11 +228,27 @@ def main():
     output3c = cur.fetchall()
 
     #Fetched item unpack into list
-    WedName = [item[0] for item in output3]
-    WedUTime = [item[1] for item in output3]
-    WedStartDate = [item[2] for item in output3]
-    WedTotalEpisode = [item[3] for item in output3]
-    WedViewPlatform = [item[5] for item in output3]
+    bWedName = [item[0] for item in output3]
+    bWedUTime = [item[1] for item in output3]
+    bWedStartDate = [item[2] for item in output3]
+    bWedTotalEpisode = [item[3] for item in output3]
+    bWedViewPlatform = [item[5] for item in output3]
+
+    #Determine if the anime start date is on the same week or later of the current date
+    WedWeekNum = list(map(weekNumCalc, bWedStartDate))
+    WedWeekNumCompare = [True if x <= CurrWeekNum else False for x in WedWeekNum]
+    WedName = []
+    WedUTime = []
+    WedStartDate = []
+    WedTotalEpisode = []
+    WedViewPlatform = []
+    for i in range(len(WedWeekNumCompare)):
+        if WedWeekNumCompare[i] == True:
+            WedName.append(bWedName[i])
+            WedUTime.append(bWedUTime[i])
+            WedStartDate.append(bWedStartDate[i])
+            WedTotalEpisode.append(bWedTotalEpisode[i])
+            WedViewPlatform.append(bWedViewPlatform[i])
 
     #WedEPCurrent: calculate current episode of such anime with func epCalc; WedEPExceed: if current episode number>total episode number of the anime = not listed
     WedEPCurrent = list(map(epCalc, WedStartDate))
@@ -235,11 +290,27 @@ def main():
     output4c = cur.fetchall()
 
     #Fetched item unpack into list
-    ThuName = [item[0] for item in output4]
-    ThuUTime = [item[1] for item in output4]
-    ThuStartDate = [item[2] for item in output4]
-    ThuTotalEpisode = [item[3] for item in output4]
-    ThuViewPlatform = [item[5] for item in output4]
+    bThuName = [item[0] for item in output4]
+    bThuUTime = [item[1] for item in output4]
+    bThuStartDate = [item[2] for item in output4]
+    bThuTotalEpisode = [item[3] for item in output4]
+    bThuViewPlatform = [item[5] for item in output4]
+
+    #Determine if the anime start date is on the same week or later of the current date
+    ThuWeekNum = list(map(weekNumCalc, bThuStartDate))
+    ThuWeekNumCompare = [True if x <= CurrWeekNum else False for x in ThuWeekNum]
+    ThuName = []
+    ThuUTime = []
+    ThuStartDate = []
+    ThuTotalEpisode = []
+    ThuViewPlatform = []
+    for i in range(len(ThuWeekNumCompare)):
+        if ThuWeekNumCompare[i] == True:
+            ThuName.append(bThuName[i])
+            ThuUTime.append(bThuUTime[i])
+            ThuStartDate.append(bThuStartDate[i])
+            ThuTotalEpisode.append(bThuTotalEpisode[i])
+            ThuViewPlatform.append(bThuViewPlatform[i])
 
     #ThuEPCurrent: calculate current episode of such anime with func epCalc; ThuEPExceed: if current episode number>total episode number of the anime = not listed
     ThuEPCurrent = list(map(epCalc, ThuStartDate))
@@ -280,11 +351,27 @@ def main():
     output5c = cur.fetchall()
 
     #Fetched item unpack into list
-    FriName = [item[0] for item in output5]
-    FriUTime = [item[1] for item in output5]
-    FriStartDate = [item[2] for item in output5]
-    FriTotalEpisode = [item[3] for item in output5]
-    FriViewPlatform = [item[5] for item in output5]
+    bFriName = [item[0] for item in output5]
+    bFriUTime = [item[1] for item in output5]
+    bFriStartDate = [item[2] for item in output5]
+    bFriTotalEpisode = [item[3] for item in output5]
+    bFriViewPlatform = [item[5] for item in output5]
+
+    #Determine if the anime start date is on the same week or later of the current date
+    FriWeekNum = list(map(weekNumCalc, bFriStartDate))
+    FriWeekNumCompare = [True if x <= CurrWeekNum else False for x in FriWeekNum]
+    FriName = []
+    FriUTime = []
+    FriStartDate = []
+    FriTotalEpisode = []
+    FriViewPlatform = []
+    for i in range(len(FriWeekNumCompare)):
+        if FriWeekNumCompare[i] == True:
+            FriName.append(bFriName[i])
+            FriUTime.append(bFriUTime[i])
+            FriStartDate.append(bFriStartDate[i])
+            FriTotalEpisode.append(bFriTotalEpisode[i])
+            FriViewPlatform.append(bFriViewPlatform[i])
 
     #FriEPCurrent: calculate current episode of such anime with func epCalc; FriEPExceed: if current episode number>total episode number of the anime = not listed
     FriEPCurrent = list(map(epCalc, FriStartDate))
@@ -325,11 +412,27 @@ def main():
     output6c = cur.fetchall()
 
     #Fetched item unpack into list
-    SatName = [item[0] for item in output6]
-    SatUTime = [item[1] for item in output6]
-    SatStartDate = [item[2] for item in output6]
-    SatTotalEpisode = [item[3] for item in output6]
-    SatViewPlatform = [item[5] for item in output6]
+    bSatName = [item[0] for item in output6]
+    bSatUTime = [item[1] for item in output6]
+    bSatStartDate = [item[2] for item in output6]
+    bSatTotalEpisode = [item[3] for item in output6]
+    bSatViewPlatform = [item[5] for item in output6]
+
+    #Determine if the anime start date is on the same week or later of the current date
+    SatWeekNum = list(map(weekNumCalc, bSatStartDate))
+    SatWeekNumCompare = [True if x <= CurrWeekNum else False for x in SatWeekNum]
+    SatName = []
+    SatUTime = []
+    SatStartDate = []
+    SatTotalEpisode = []
+    SatViewPlatform = []
+    for i in range(len(SatWeekNumCompare)):
+        if SatWeekNumCompare[i] == True:
+            SatName.append(bSatName[i])
+            SatUTime.append(bSatUTime[i])
+            SatStartDate.append(bSatStartDate[i])
+            SatTotalEpisode.append(bSatTotalEpisode[i])
+            SatViewPlatform.append(bSatViewPlatform[i])
 
     #SatEPCurrent: calculate current episode of such anime with func epCalc; SatEPExceed: if current episode number>total episode number of the anime = not listed
     SatEPCurrent = list(map(epCalc, SatStartDate))
@@ -369,11 +472,27 @@ def main():
     UpdateWeekDay = 0 AND StartDate >= ? AND ViewStatus = "" AND EpisodeNumber = "" ORDER BY Time""", (SQLDate, ))
     output0c = cur.fetchall()
     #Fetched item unpack into list
-    SunName = [item[0] for item in output0]
-    SunUTime = [item[1] for item in output0]
-    SunStartDate = [item[2] for item in output0]
-    SunTotalEpisode = [item[3] for item in output0]
-    SunViewPlatform = [item[5] for item in output0]
+    bSunName = [item[0] for item in output0]
+    bSunUTime = [item[1] for item in output0]
+    bSunStartDate = [item[2] for item in output0]
+    bSunTotalEpisode = [item[3] for item in output0]
+    bSunViewPlatform = [item[5] for item in output0]
+
+    #Determine if the anime start date is on the same week or later of the current date
+    SunWeekNum = list(map(weekNumCalc, bSunStartDate))
+    SunWeekNumCompare = [True if x <= CurrWeekNum else False for x in SunWeekNum]
+    SunName = []
+    SunUTime = []
+    SunStartDate = []
+    SunTotalEpisode = []
+    SunViewPlatform = []
+    for i in range(len(SunWeekNumCompare)):
+        if SunWeekNumCompare[i] == True:
+            SunName.append(bSunName[i])
+            SunUTime.append(bSunUTime[i])
+            SunStartDate.append(bSunStartDate[i])
+            SunTotalEpisode.append(bSunTotalEpisode[i])
+            SunViewPlatform.append(bSunViewPlatform[i])
 
     #SunEPCurrent: calculate current episode of such anime with func epCalc; SunEPExceed: if current episode number>total episode number of the anime = not listed
     SunEPCurrent = list(map(epCalc, SunStartDate))
