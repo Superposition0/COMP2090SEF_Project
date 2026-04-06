@@ -29,7 +29,7 @@ class Trie:
         prefix=prefix.lower()
         node=self.root
         for char in prefix:
-            if char not in node.children:
+            if char not in node.children: # Returns an empty list if the prefix string is not part of the child node
                 return []
             node=node.children[char]
         results=[]
