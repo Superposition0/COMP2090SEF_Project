@@ -3,7 +3,40 @@ from pynput import keyboard
 import os
 from pathlib import Path
 
-car_model=[]
+class TrieNode: # Creates a possible search route depending on the users input
+    def __init__(self):
+        self.children={}
+        self.word_end=False
+
+class Trie:
+    def __init__(self): # Initialize TrieNode
+        self.root=TrieNode()
+
+    def insert(self, word): # Create child note: which is for the possible word the user is typing
+        node=self.root
+        for char in word.lower():
+            if char not in node.children:
+                node.children[char]=TrieNode()
+            node=node.children[char]
+        node.word_end=True
+
+    def Prefix(self, prefix): # A function that appends all matching words or searches with the prefix string
+        def collect(node, current, results):
+            if node.word_end:
+                results.append(current)
+            for char, child_node in node.children.items():
+                collect(child_node, current+char, results)
+        prefix=prefix.lower()
+        node=self.root
+        for char in prefix:
+            if char not in node.children:
+                return []
+            node=node.children[char]
+        results=[]
+        collect(node, prefix, results)
+        return results
+
+trie=Trie()
 temp=[]
 
 def get_file():
@@ -12,7 +45,8 @@ def get_file():
     root=dir_path/'gran_turismo_gt7.csv'
     with open(root, 'r', encoding='utf-8') as file:
         for line in file:
-            car_model.append(line.strip().split(',')[0])
+            car_name=line.strip().split(',')[0]
+            trie.insert(car_name)
 
 def on_press(key):
     # Records the key that you are pressing and store them into the array.
@@ -21,7 +55,7 @@ def on_press(key):
         running=False
         return False
     try:
-        # Record and append typed letters into the array, including spcaes and backspaces.
+        # Record and append typed prefix letters into the array, including spcaes and backspaces.
         temp.append(key.char)
         query=''.join(temp)
         car_result(query)
@@ -37,14 +71,13 @@ def on_press(key):
                 car_result(query)
 
 def car_result(query):
-    # Comparing the typed string with the car models' names in the list.
+    # Comparing the prefix string with the car models' names in the list.
     os.system('cls||clear')
     print(f'Search: {query}\n')
     if not query:
         print('Type in any car model you like!')
         return []
-    query_lower=query.lower()
-    result_list=[car for car in car_model if query_lower in car.lower()]
+    result_list=trie.Prefix(query)
     if result_list:
         print('Search Result(s):\n')
         for i in range(len(result_list)):
@@ -60,4 +93,4 @@ get_file()
 listener=keyboard.Listener(on_press=on_press)
 listener.start()
 listener.join()
-print('\nSearchbar program terminated.')
+print('\nSearch bar program terminated.')
