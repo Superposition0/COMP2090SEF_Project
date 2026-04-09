@@ -2,6 +2,7 @@
 from pynput import keyboard
 import os
 from pathlib import Path
+import time
 
 class TrieNode: # Creates a possible search route depending on the users input
     def __init__(self):
@@ -72,6 +73,7 @@ def on_press(key):
 
 def car_result(query):
     # Comparing the prefix string with the car models' names in the list.
+    start=time.time()
     os.system('cls||clear')
     print(f'Search: {query}\n')
     if not query:
@@ -82,6 +84,8 @@ def car_result(query):
         print('Search Result(s):\n')
         for i in range(len(result_list)):
             print(f'{i+1}) {result_list[i]}')
+        end=time.time()
+        print(f'\nTime used: {end-start}')
     else:
         print('No results found.')
 
