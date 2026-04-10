@@ -25,6 +25,7 @@ This programme can be run in few different ways:
      ```
 ---
 ### Download packages manually
+  0. Python version >= 3.13 is recommended
   1. Open your terminal(MacOS/Linux) or powershell(Windows)
   2. Type the following command:
      ```bash
