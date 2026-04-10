@@ -1,0 +1,15 @@
+name: project
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.13
+  - pip
+  - rich
+  - shellingham
+  - sqlite
+  - typer
+  - typer-slim
+  - typer-slim-standard
+  - pip:
+      - pynput
