@@ -73,8 +73,8 @@ def on_press(key):
 
 def car_result(query):
     # Comparing the prefix string with the car models' names in the list.
-    start=time.time()
     os.system('cls||clear')
+    start=time.time()
     print(f'Search: {query}\n')
     if not query:
         print('Type in any car model you like!')
