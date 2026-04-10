@@ -39,7 +39,6 @@ class anime:
                 cur.execute("UPDATE anime SET Ratings = ? WHERE Name = ?",(rate, toBeChange))
                 print("Rated!")
                 conn.commit()
-                conn.close()
                 return "done"
             elif confirm == False:
                 ...
@@ -56,7 +55,6 @@ class anime:
                 cur.execute("UPDATE anime SET Notes = ? WHERE Name = ?",(notes, toBeChange))
                 print("Noted!")
                 conn.commit()
-                conn.close()
                 return "done"
             elif confirm == False:
                 ...
