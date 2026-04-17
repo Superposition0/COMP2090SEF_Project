@@ -1,4 +1,6 @@
 # Task 1
+## Introduction video link
+[https://youtu.be/RAGitFcSRZ4](https://youtu.be/RAGitFcSRZ4)
 ## Description
 This programme is an anime tracker. 
 Main purpose of this programme is to assist user to keep track of which anime will be updated, when will it be updated, which episode will be updated and which platform to watch.
