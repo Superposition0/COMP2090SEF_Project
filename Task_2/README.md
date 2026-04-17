@@ -1,4 +1,6 @@
 # Task 2
+## Introduction video link
+[https://youtu.be/MAhZ2B5_fbU](https://youtu.be/MAhZ2B5_fbU)
 ## Description(Data structure)
   Trie was selected to be our group's study topic.
   
